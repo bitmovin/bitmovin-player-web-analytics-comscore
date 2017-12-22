@@ -1,0 +1,63 @@
+extends layout.pug
+
+block body
+
+	p Bitmovin Player with no analytics setup
+
+	.container
+		.content
+			.player-wrapper
+				#player
+
+block script
+	script(type='text/javascript').
+		var conf = {
+			key: 'YOUR-PLAYER-KEY',
+			source: {
+				title: 'Art of Motion',
+				description: 'What is this event... Parcour?',
+				dash: '//bitmovin-a.akamaihd.net/content/MI201109210084_1/mpds/f08e80da-bf1d-4e3d-8899-f0f6155f6efa.mpd',
+				hls: '//bitmovin-a.akamaihd.net/content/MI201109210084_1/m3u8s/f08e80da-bf1d-4e3d-8899-f0f6155f6efa.m3u8',
+				progressive: '//bitmovin-a.akamaihd.net/content/MI201109210084_1/MI201109210084_mpeg-4_hd_high_1080p25_10mbits.mp4',
+				poster: '//bitmovin-a.akamaihd.net/content/art-of-motion_drm/art-of-motion_poster.jpg',
+				viewerId: 'uniqueViewerIdThatOverridesTheConvivaAnalyticsConfig', // Conviva viewerId
+				contentId: 'uniqueContentId', // Conviva contentId (will be prefixed to the title)
+			},
+			playback: {},
+			style: {},
+			cast: {
+				enable: true
+			},
+			logs: {
+				//level: 'debug'
+			},
+			events: {},
+			advertising: {
+				client: 'ima', // vast, ima
+				schedule: {
+					'ad-pre': {
+						offset: 'pre',
+						tag: 'https://pubads.g.doubleclick.net/gampad/ads?sz=640x480&iu=/32573358/skippable_ad_unit&impl=s&gdfp_req=1&env=vp&output=xml_vast2&unviewed_position_start=1&url=http%3A%2F%2Freleasetest.dash-player.com%2Fads%2F&description_url=[description_url]&correlator=[random]'
+					},
+					'ad-skippable-ima': {
+						offset: '30',
+						tag: 'https://pubads.g.doubleclick.net/gampad/ads?sz=640x480&iu=/32573358/skippable_ad_unit&impl=s&gdfp_req=1&env=vp&output=xml_vast2&unviewed_position_start=1&url=http%3A%2F%2Freleasetest.dash-player.com%2Fads%2F&description_url=[description_url]&correlator=[random]'
+					},
+					'ad-post': {
+						offset: 'post',
+						tag: 'https://pubads.g.doubleclick.net/gampad/ads?sz=640x480&iu=/32573358/2nd_test_ad_unit&ciu_szs=300x100&impl=s&gdfp_req=1&env=vp&output=vast&unviewed_position_start=1&url=[referrer_url]&description_url=[description_url]&correlator=[random]'
+					}
+				}
+			}
+		};
+
+		var player = bitmovin.player('player');
+
+		
+
+		player.setup(conf).then(function() {
+			console.log('player loaded');
+		}, function(reason) {
+			console.error('player setup failed');
+			console.error(reason);
+		});

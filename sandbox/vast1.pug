@@ -1,0 +1,88 @@
+extends layout.pug
+
+block body
+
+	p Analytics test with VAST
+
+	.container
+		.content
+			.player-wrapper
+				#player
+
+block script
+	script(type='text/javascript', src='dist/index.js')
+	script(type='text/javascript').
+
+		// Changing correlator to serve an ad every time
+
+
+		/*
+			simple skip:
+
+			https://pubads.g.doubleclick.net/gampad/ads?sz=640x480&iu=/124319096/external/single_ad_samples&ciu_szs=300x250&impl=s&gdfp_req=1&env=vp&output=vast&unviewed_position_start=1&cust_params=deployment%3Ddevsite%26sample_ct%3Dskippablelinear&correlator=
+			Lin:
+
+			https://pubads.g.doubleclick.net/gampad/ads?sz=640x480&iu=/124319096/external/single_ad_samples&ciu_szs=300x250&impl=s&gdfp_req=1&env=vp&output=vast&unviewed_position_start=1&cust_params=deployment%3Ddevsite%26sample_ct%3Dskippablelinear
+
+			long
+				https://pubads.g.doubleclick.net/gampad/ads?sz=640x480&iu=/124319096/external/ad_rule_samples&ciu_szs=300x250&ad_rule=1&impl=s&gdfp_req=1&env=vp&output=vmap&unviewed_position_start=1&cust_params=deployment%3Ddevsite%26sample_ar%3Dpremidpostpod&cmsid=496&vid=short_onecue&correlator=
+
+		*/
+
+		// fallback
+		var t1 = "https://pubads.g.doubleclick.net/gampad/ads?sz=640x480&iu=/124319096/external/single_ad_samples&ciu_szs=300x250&impl=s&gdfp_req=1&env=vp&output=vast&unviewed_position_start=1&cust_params=deployment%3Ddevsite%26sample_ct%3Dredirecterror&correlator=" + Math.round(Math.random()*100)
+
+		// simple
+		var t2 = 'https://pubads.g.doubleclick.net/gampad/ads?sz=640x480&iu=/124319096/external/single_ad_samples&ciu_szs=300x250&impl=s&gdfp_req=1&env=vp&output=vast&unviewed_position_start=1&cust_params=deployment%3Ddevsite%26sample_ct%3Dskippablelinear&correlator=' + Math.round(Math.random()*100)
+
+
+		var conf = {
+			key: 'YOUR-PLAYER-KEY',
+			source: {
+				title: 'Art of Motion',
+				description: 'What is this event... Parcour?',
+				dash: '//bitmovin-a.akamaihd.net/content/MI201109210084_1/mpds/f08e80da-bf1d-4e3d-8899-f0f6155f6efa.mpd',
+				hls: '//bitmovin-a.akamaihd.net/content/MI201109210084_1/m3u8s/f08e80da-bf1d-4e3d-8899-f0f6155f6efa.m3u8',
+				progressive: '//bitmovin-a.akamaihd.net/content/MI201109210084_1/MI201109210084_mpeg-4_hd_high_1080p25_10mbits.mp4',
+				poster: '//bitmovin-a.akamaihd.net/content/art-of-motion_drm/art-of-motion_poster.jpg',
+				viewerId: 'uniqueViewerIdThatOverridesTheConvivaAnalyticsConfig', // Conviva viewerId
+				contentId: 'uniqueContentId', // Conviva contentId (will be prefixed to the title)
+			},
+			playback: {},
+			style: {},
+			cast: {
+				enable: true
+			},
+			logs: {
+				//level: 'debug'
+			},
+			events: {},
+			advertising: {
+				client: 'vast', // vast, ima
+				tag: t2
+			}
+		};
+
+
+
+		var player = bitmovin.player('player');
+
+		var comscore = new bitmovin.player.analytics.ComscoreAnalytics(player, {
+			key: 'CUSTOMER_KEY',
+			clientId: 'CLIENT_ID',
+			debug: true,
+			alternativeUri: 'http://localhost:9050/log',
+			debugLoggingEnabled: true,
+			gatewayUrl: 'https://youraccount-test.testonly.conviva.com', // TOUCHSTONE_SERVICE_URL for testing
+			applicationName: 'Bitmovin Player Conviva Analytics Integration Test Page',
+			viewerId: 'uniqueViewerId',
+		});
+
+
+
+		player.setup(conf).then(function() {
+			console.log('player loaded');
+		}, function(reason) {
+			console.error('player setup failed');
+			console.error(reason);
+		});
