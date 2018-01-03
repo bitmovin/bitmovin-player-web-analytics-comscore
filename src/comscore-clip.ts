@@ -25,15 +25,16 @@ let ct = {
     other: 'va00',
     audio: 'aa00'
   }
-};
+}
 
 /*
 	Huge warning, this class DOES NOT protect from a silly input
 
 	---------------
 
+  ci - content id
 	cn - clip number
-	ci - content id
+
 	pn - part number
 	tp - total parts
 	cl - clip Length
@@ -47,35 +48,39 @@ let ct = {
 	ct - classification type
 */
 
+
 class Clip {
 
   id: any
-  duration: number
+  index: number
+
+  ct: string
+  live: boolean
+
   url: string
   name: string
-  live: boolean
-  ct: string
+  duration: number
 
 
   constructor(metadata: any) {
     if (metadata == null) {
-      throw new Error('Clip constructor needs metadata');
+      throw new Error('Clip constructor needs metadata')
     }
     if (metadata.id == null) {
-      throw new Error('Should at least provide an id');
+      throw new Error('Should at least provide an id')
     }
     // Core
-    this.id = metadata.id;
+    this.id = metadata.id
 
     // If provided, override the defaults
-    this.duration = metadata.duration || 0;
-    this.url = metadata.uri || 'none';
-    this.name = metadata.name || 'none';
+    this.duration = metadata.duration || 0
+    this.url = metadata.uri || 'none'
+    this.name = metadata.name || 'none'
 
     // Content Type
-    this.live = metadata.live || false;
-    this.ct = ct.content.other;
-    return this;
+    this.live = metadata.live || false
+    this.ct = ct.content.other
+    return this
   }
 
   /*
@@ -83,63 +88,66 @@ class Clip {
   	- Content type is added as safenet here. should be overriden by children
   */
   serialize() {
-    let raw = {
+    let raw: any = {
       ns_st_ci: this.id,
       ns_st_cl: this.duration,
       ns_st_cu: this.url,
       ns_st_ct: this.ct
-    };
-    return raw;
+    }
+
+    // TODO: REMOVE AFTER DEV
+    raw.name = this.name
+    return raw
   }
 
   setDuration(ms: number): void {
-    this.duration = Math.round(ms);
+    this.duration = Math.round(ms)
   }
 
-  setLive(b: boolean):void {
-    this.live = b;
+  setLive(b: boolean): void {
+    this.live = b
   }
 
-};
+}
 
 class Ad extends Clip {
   constructor(metadata: any) {
-    super(metadata);
+    super(metadata)
     // Override parent defaults
     if (this.live) {
-      this.ct = ct.ad.live;
+      this.ct = ct.ad.live
     } else {
-      this.ct = ct.ad.other;
+      this.ct = ct.ad.other
     }
-    return this;
+    return this
   }
 
   serialize() {
-    let basic: any = super.serialize();
-    basic.ns_st_ad = true;
+    let basic: any = super.serialize()
+    basic.ns_st_ad = true
     if (this.live) {
-      this.ct = ct.ad.live;
-      basic.ns_st_ct = ct.ad.live;
+      this.ct = ct.ad.live
+      basic.ns_st_ct = ct.ad.live
     }
-    return basic;
+    return basic
   }
 
   setPre() {
-    this.setLive(false);
-    this.ct = ct.ad.pre;
+    this.setLive(false)
+    this.ct = ct.ad.pre
   }
 
   setMid() {
-    this.setLive(false);
-    this.ct = ct.ad.mid;
+    this.setLive(false)
+    this.ct = ct.ad.mid
   }
 
   setPost() {
-    this.setLive(false);
-    this.ct = ct.ad.post;
+    this.setLive(false)
+    this.ct = ct.ad.post
   }
 
-};
+}
 
 class Content extends Clip {
 
@@ -152,7 +160,7 @@ class Content extends Clip {
   episode: string
 
   constructor(metadata: any) {
-    super(metadata);
+    super(metadata)
 
     /*
     	- Configure Premium and User Generated Content defaults
@@ -160,42 +168,42 @@ class Content extends Clip {
     	- Resolve case when premium and UGC are both true
     */
 
-    this.ugc = metadata.ugc || false;
-    this.premium = metadata.premium || true;
-    this.audioOnly = metadata.audioOnly || false;
+    this.ugc = metadata.ugc || false
+    this.premium = metadata.premium || true
+    this.audioOnly = metadata.audioOnly || false
     if ((metadata.premium != null) && metadata.premium === true) {
-      this.setPremium();
+      this.setPremium()
     }
     if ((metadata.ugc != null) && metadata.ugc === true) {
-      this.setUgc();
+      this.setUgc()
     }
 
     // Meta publisher info
-    this.publisher = metadata.publisher || null;
-    this.program = metadata.program || null;
-    this.episode = metadata.episode || null;
-    
-    return this;
+    this.publisher = metadata.publisher || null
+    this.program = metadata.program || null
+    this.episode = metadata.episode || null
+
+    return this
   }
 
   setUgc() {
-    this.premium = false;
-    this.ugc = true;
+    this.premium = false
+    this.ugc = true
   }
 
   setPremium() {
-    this.ugc = false;
-    this.premium = true;
+    this.ugc = false
+    this.premium = true
   }
 
   serialize() {
-    let a, basic;
+    let a, basic
 
-    basic = super.serialize();
-    a = this._getContentType();
-    basic.ns_st_ct = a;
+    basic = super.serialize()
+    a = this._getContentType()
+    basic.ns_st_ct = a
 
-    return basic;
+    return basic
   }
 
   /*
@@ -205,62 +213,62 @@ class Content extends Clip {
   */
   _isShort() {
     if (this.duration === 0) {
-      return true;
+      return true
     }
-    return this.duration < 600000;
+    return this.duration < 600000
   }
   _isLong() {
-    return !this._isShort();
+    return !this._isShort()
   }
 
   _getContentType() {
-    let gt = ct.content.other;
+    let gt = ct.content.other
     if (this.premium) {
       if (this._isShort()) {
-        gt = ct.content.premium.short;
+        gt = ct.content.premium.short
       }
       if (this._isLong()) {
-        gt = ct.content.premium.long;
+        gt = ct.content.premium.long
       }
       if (this.live) {
-        gt = ct.content.premium.live;
+        gt = ct.content.premium.live
       }
     } else if (this.ugc) {
       if (this._isShort()) {
-        gt = ct.content.ugc.short;
+        gt = ct.content.ugc.short
       }
       if (this._isLong()) {
-        gt = ct.content.ugc.long;
+        gt = ct.content.ugc.long
       }
       if (this.live) {
-        gt = ct.content.ugc.live;
+        gt = ct.content.ugc.live
       }
     } else if (this.audioOnly) {
-      gt = ct.content.audio;
+      gt = ct.content.audio
     } else {
-      gt = ct.content.other;
+      gt = ct.content.other
     }
-    return gt;
+    return gt
   }
 
   getPublisherStuffIfExists() {
-    let pub: any = {};
+    let pub: any = {}
     if (this.publisher != null) {
-      pub.ns_st_pu = this.publisher;
+      pub.ns_st_pu = this.publisher
     }
     if (this.program != null) {
-      pub.ns_st_pr = this.program;
+      pub.ns_st_pr = this.program
     }
     if (this.episode != null) {
-      return pub.ns_st_ep = this.episode;
+      return pub.ns_st_ep = this.episode
     }
   }
 
-};
+}
 
 export {
   Clip as Clip,
   Clip as default,
   Ad as Ad,
-  Content as Content
-};
+  Content as Content,
+}
