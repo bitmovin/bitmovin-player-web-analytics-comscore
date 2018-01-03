@@ -18,6 +18,7 @@ npm-debug.log
 .vscode
 
 # Logs and stats
+.tmp
 stats.json
 prod-build-stats.json
 

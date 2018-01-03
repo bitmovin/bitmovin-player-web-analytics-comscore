@@ -57,7 +57,7 @@ module.exports =
 			launch: true
 			port: 3030
 			excludeSourceMaps: true
-			target: '../prod-build-stats.json'
+			target: '../.tmp/prod-build-stats.json'
 
 		new webpack.DefinePlugin
 			__DEV__:        JSON.stringify false
@@ -65,7 +65,7 @@ module.exports =
 
 		new LodashModuleReplacementPlugin
 			paths: true
-			
+
 		new UglifyJSPlugin()
 
 	]

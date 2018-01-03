@@ -34,8 +34,16 @@ test: ## Run tests in node
 		--reporter $(REPORTER) \
 		"test/**/*.{js,ts,coffee}"
 
+watchAndTest: ## Run tests in node in a watch mode
+	@ NODE_ENV=test \
+		$(bin)/mocha-webpack \
+		--watch \
+		--webpack-config ./build/config-webpack-test.coffee \
+		--reporter $(REPORTER) \
+		"test/**/*.{js,ts,coffee}"
+
 .PHONY: coverage
-coverage: ## Run test coverage
+coverage: ## Run tests and generate coverage report
 	@ NODE_ENV=coverage \
 		$(bin)/nyc \
 		$(bin)/mocha-webpack \
@@ -43,10 +51,10 @@ coverage: ## Run test coverage
 		--reporter $(REPORTER) \
 		"test/**/*.{js,ts,coffee}"
 
-showCoverage: ## Show coverage report
+showCoverage: ## Launch an http server that will server coverage html
 	@ NODE_ENV=coverage \
 		$(bin)/http-server \
-		-p 9022 ./coverage/lcov-report
+		-p 9022 ./.tmp/coverage/lcov-report
 
 
 .PHONY: lint
@@ -57,13 +65,7 @@ lint: ## Run test coverage
 		--project ./tsconfig.json
 
 
-watchAndTest: ## Run tests in node in a watch mode
-	@ NODE_ENV=test \
-		$(bin)/mocha-webpack \
-		--watch \
-		--webpack-config ./build/config-webpack-test.coffee \
-		--reporter $(REPORTER) \
-		"test/**/*.{js,ts,coffee}"
+
 
 
 # -- Utils
