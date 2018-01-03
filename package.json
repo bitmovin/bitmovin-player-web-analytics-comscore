@@ -27,10 +27,12 @@
     "express": "^4.16.2",
     "html-webpack-plugin": "^2.30.1",
     "http-server": "^0.10.0",
+    "istanbul-instrumenter-loader": "^3.0.0",
     "lodash-webpack-plugin": "^0.11.4",
     "mocha": "^4.0.1",
     "mocha-webpack": "^1.0.1",
     "morgan": "^1.9.0",
+    "nyc": "^11.4.1",
     "pug": "^2.0.0-rc.4",
     "pug-loader": "^2.3.0",
     "ts-loader": "^3.2.0",
@@ -50,5 +52,17 @@
     "lodash": "^4.17.4",
     "lodash-es": "^4.17.4",
     "promise-async": "^0.2.0"
+  },
+  "nyc": {
+    "include": [
+      "src/**/*.js",
+      "src/**/*.ts",
+      "src/**/*.coffee"
+    ],
+    "instrument": false,
+    "sourceMap": false,
+    "reporter": [
+      "lcov"
+    ]
   }
 }

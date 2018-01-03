@@ -34,6 +34,15 @@ test: ## Run tests in node
 		--reporter $(REPORTER) \
 		"test/**/*.{js,ts,coffee}"
 
+.PHONY: coverage
+coverage: ## Run test coverage
+	@ NODE_ENV=coverage \
+		$(bin)/nyc \
+		$(bin)/mocha-webpack \
+		--webpack-config ./build/config-webpack-test.coffee \
+		--reporter $(REPORTER) \
+		"test/**/*.{js,ts,coffee}"
+
 watchAndTest: ## Run tests in node in a watch mode
 	@ NODE_ENV=test \
 		$(bin)/mocha-webpack \

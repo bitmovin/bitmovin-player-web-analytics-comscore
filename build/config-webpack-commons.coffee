@@ -1,3 +1,5 @@
+path = require 'path'
+
 moduleDevConfig =
 	rules: [
 		test: /\.coffee$/
@@ -11,6 +13,22 @@ moduleDevConfig =
 		]
 	]
 
+if (process.env.NODE_ENV == 'coverage')
+	moduleDevConfig =
+		rules: [
+			test: /\.coffee$/
+			exclude: /node_modules/
+			use: [
+					loader: 'istanbul-instrumenter-loader'
+					options: presets: [ 'env' ]
+				,
+					loader: 'babel-loader'
+					options: presets: [ 'env' ]
+				,
+					loader: 'coffee-loader'
+					options: sourceMap: true
+			]
+		]
 
 coreExtensions = [
 	'.js'

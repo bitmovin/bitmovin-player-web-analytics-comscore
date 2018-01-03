@@ -1,6 +1,7 @@
 # Don't check auto-generated stuff into git
 coverage
 node_modules
+.nyc_output
 
 # Build stuff
 dist
