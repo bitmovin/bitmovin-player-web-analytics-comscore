@@ -38,6 +38,7 @@
     "pug-loader": "^2.3.0",
     "source-map-loader": "^0.2.3",
     "ts-loader": "^3.2.0",
+    "tslint": "^5.8.0",
     "typescript": "^2.6.2",
     "uglifyjs-webpack-plugin": "^1.1.2",
     "webpack": "^3.10.0",
@@ -48,13 +49,8 @@
     "webpack-node-externals": "^1.6.0"
   },
   "dependencies": {
-    "async": "^2.6.0",
-    "bitmovin-javascript": "^1.6.0",
-    "bitmovin-player": "^7.4.7",
-    "bitmovin-player-ui": "^2.10.5",
     "lodash": "^4.17.4",
-    "lodash-es": "^4.17.4",
-    "promise-async": "^0.2.0"
+    "lodash-es": "^4.17.4"
   },
   "nyc": {
     "include": [

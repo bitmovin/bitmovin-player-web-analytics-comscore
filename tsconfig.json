@@ -1,4 +1,7 @@
 {
+  "files": [
+    "src/comscore-clip.ts"
+  ],
   "compilerOptions": {
     "noImplicitAny": true,
     "target": "es5",

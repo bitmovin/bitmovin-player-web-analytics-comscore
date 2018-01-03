@@ -46,7 +46,7 @@ module.exports =
 					,
 						loader: 'ts-loader'
 						options:
-							sourceMap: false
+							transpileOnly: false
 				]
 		]
 

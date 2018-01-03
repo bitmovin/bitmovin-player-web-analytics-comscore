@@ -43,6 +43,14 @@ coverage: ## Run test coverage
 		--reporter $(REPORTER) \
 		"test/**/*.{js,ts,coffee}"
 
+.PHONY: lint
+lint: ## Run test coverage
+	@ NODE_ENV=develop \
+		$(bin)/tslint \
+		-c ./tslint.json \
+		--project ./tsconfig.json
+
+
 watchAndTest: ## Run tests in node in a watch mode
 	@ NODE_ENV=test \
 		$(bin)/mocha-webpack \
