@@ -17,8 +17,9 @@ compiler = webpack config
 app.set 'views', './sandbox'
 app.set 'view engine', 'pug'
 
-app.use '/dist', express.static server.dist
-app.use '/libs', express.static server.libs
+app.get '/favico.ico' , (req , res) -> res.redirect 301, 'https://bitmovin.com/favicon.ico'
+app.use '/dist', express.static server.dist, staticOpts
+app.use '/libs', express.static server.libs, staticOpts
 app.use '/sandbox', express.static server.sandbox
 
 app.get '/', (req, res) -> res.render 'index'
