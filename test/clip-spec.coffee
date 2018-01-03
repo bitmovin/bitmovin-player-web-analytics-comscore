@@ -6,8 +6,8 @@ path = require 'path'
 
 process.env.DEBUG = 'bt-comscore:*'
 
-import Clip from '../src/comscore-clip.coffee'
-import { Ad, Content } from '../src/comscore-clip.coffee'
+import Clip from '../src/comscore-clip.ts'
+import { Ad, Content } from '../src/comscore-clip.ts'
 
 try
 	describe 'Clip tests: ', ->

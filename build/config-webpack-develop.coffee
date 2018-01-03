@@ -24,7 +24,8 @@ module.exports =
 
 	module:
 		rules: _.concat( [],
-			commons.rules.coffee,
+			commons.rules.coffee
+			commons.rules.ts
 			commons.rules.pug
 		)
 

@@ -35,6 +35,19 @@ module.exports =
 						options:
 							sourceMap: true
 				]
+			,
+				test: /\.ts$/
+				exclude: /node_modules/
+				use: [
+						loader: 'babel-loader'
+						options:
+							presets: [ 'env' ]
+							plugins: [ 'lodash' ]
+					,
+						loader: 'ts-loader'
+						options:
+							sourceMap: false
+				]
 		]
 
 	externals: commons.externals

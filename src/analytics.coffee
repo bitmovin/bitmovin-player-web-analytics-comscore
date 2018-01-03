@@ -4,7 +4,7 @@ import bitmovin from 'BitmovinBundle'
 # Local
 import _ from 'lodash-es'
 # import Comscore from './comscore'
-import Clip from './comscore-clip'
+import { Clip } from './comscore-clip'
 
 # TODO: Add validation if it is avaliable in the browser
 import StreamSense from 'streamsense'
@@ -168,7 +168,7 @@ class Analytics
 	###
 	onAdStarted: (e) ->
 		@isAd = true
-		
+
 		# Configure ad and inspect ad type pre/mid/post
 		@currentClipIndex += 1
 		ad = new Clip

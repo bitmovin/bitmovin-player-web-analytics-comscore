@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "noImplicitAny": true,
+    "target": "es5",
+    "declaration": true,
+    "lib": ["es6", "dom", "scripthost"],
+    "sourceMap": true
+  }
+}

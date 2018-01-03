@@ -2,15 +2,25 @@ path = require 'path'
 
 moduleDevConfig =
 	rules: [
-		test: /\.coffee$/
-		exclude: /node_modules/
-		use: [
-				loader: 'babel-loader'
-				options: presets: [ 'env' ]
-			,
-				loader: 'coffee-loader'
-				options: sourceMap: true
-		]
+			test: /\.coffee$/
+			exclude: /node_modules/
+			use: [
+					loader: 'babel-loader'
+					options: presets: [ 'env' ]
+				,
+					loader: 'coffee-loader'
+					options: sourceMap: true
+			]
+		,
+			test: /\.ts$/
+			exclude: /node_modules/
+			use: [
+					loader: 'babel-loader'
+					options: presets: [ 'env' ]
+				,
+					loader: 'ts-loader'
+					options: transpileOnly: false
+			]
 	]
 
 if (process.env.NODE_ENV == 'coverage')
@@ -49,6 +59,14 @@ rules =
 			options:
 				sourceMap: true
 		]
+	ts:
+		test: /\.ts$/
+		use: [
+			loader: 'ts-loader'
+			options:
+				transpileOnly: false
+		]
+
 	pug:
 		test: /\.pug$/,
 		use: [
