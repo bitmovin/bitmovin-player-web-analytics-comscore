@@ -168,7 +168,7 @@ class Analytics
 	###
 	onAdStarted: (e) ->
 		@isAd = true
-
+		
 		# Configure ad and inspect ad type pre/mid/post
 		@currentClipIndex += 1
 		ad = new Clip
