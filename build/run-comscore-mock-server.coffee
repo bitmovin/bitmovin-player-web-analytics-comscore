@@ -3,7 +3,7 @@ morgan = require 'morgan'
 
 app = express()
 
-app.get '/favico.ico' , (req , res) -> res.redirect 301, 'https://bitmovin.com/favicon.ico'
+app.get '/favicon.ico' , (req , res) -> res.redirect 301, 'https://bitmovin.com/favicon.ico'
 app.get '/', (req, res) -> res.send 'hello, world!'
 app.get '/log', (req, res) ->
 

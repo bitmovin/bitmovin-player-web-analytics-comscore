@@ -26,18 +26,32 @@ moduleDevConfig =
 if (process.env.NODE_ENV == 'coverage')
 	moduleDevConfig =
 		rules: [
-			test: /\.coffee$/
-			exclude: /node_modules/
-			use: [
-					loader: 'istanbul-instrumenter-loader'
-					options: presets: [ 'env' ]
-				,
-					loader: 'babel-loader'
-					options: presets: [ 'env' ]
-				,
-					loader: 'coffee-loader'
-					options: sourceMap: true
-			]
+				test: /\.coffee$/
+				exclude: /node_modules/
+				use: [
+						loader: 'istanbul-instrumenter-loader'
+						options: presets: [ 'env' ]
+					,
+						loader: 'babel-loader'
+						options: presets: [ 'env' ]
+					,
+						loader: 'coffee-loader'
+						options: sourceMap: true
+				]
+			,
+				test: /\.ts$/
+				exclude: /node_modules/
+				use: [
+						loader: 'istanbul-instrumenter-loader'
+						options: presets: [ 'env' ]
+					,
+						loader: 'babel-loader'
+						options: presets: [ 'env' ]
+					,
+						loader: 'ts-loader'
+						options: transpileOnly: false
+				]
+
 		]
 
 coreExtensions = [

@@ -18,8 +18,7 @@ module.exports =
 
 	resolve:
 		extensions: commons.coreExtensions
-		alias:
-			libs: "#{rootDir}/libs/"
+		alias: libs: "#{rootDir}/libs/"
 
 	module:
 		rules: [
@@ -64,7 +63,9 @@ module.exports =
 			__DEV__:        JSON.stringify false
 			__PRODUCTION__: JSON.stringify true
 
-		new LodashModuleReplacementPlugin()
+		new LodashModuleReplacementPlugin
+			paths: true
+			
 		new UglifyJSPlugin()
 
 	]

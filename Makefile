@@ -43,6 +43,12 @@ coverage: ## Run test coverage
 		--reporter $(REPORTER) \
 		"test/**/*.{js,ts,coffee}"
 
+showCoverage: ## Show coverage report
+	@ NODE_ENV=coverage \
+		$(bin)/http-server \
+		-p 9022 ./coverage/lcov-report
+
+
 .PHONY: lint
 lint: ## Run test coverage
 	@ NODE_ENV=develop \

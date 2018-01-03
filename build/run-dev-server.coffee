@@ -17,7 +17,7 @@ compiler = webpack config
 app.set 'views', './sandbox'
 app.set 'view engine', 'pug'
 
-app.get '/favico.ico', (req , res) -> res.redirect 301, 'https://bitmovin.com/favicon.ico'
+app.use '/favicon.ico', (req, res) -> res.status(204).send 'No Content'
 app.use '/dist', webpackDevMiddleware compiler, publicPath: config.output.publicPath
 app.use '/libs', express.static server.libs
 app.use '/sandbox', express.static server.sandbox

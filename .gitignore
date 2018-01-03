@@ -15,6 +15,7 @@ shrinkwrap.yaml
 .DS_Store
 npm-debug.log
 .idea
+.vscode
 
 # Logs and stats
 stats.json

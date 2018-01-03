@@ -17,13 +17,13 @@ compiler = webpack config
 app.set 'views', './sandbox'
 app.set 'view engine', 'pug'
 
-app.get '/favico.ico' , (req , res) -> res.redirect 301, 'https://bitmovin.com/favicon.ico'
-app.use '/dist', express.static server.dist, staticOpts
-app.use '/libs', express.static server.libs, staticOpts
+app.get '/favicon.ico' , (req , res) -> res.redirect 301, 'https://bitmovin.com/favicon.ico'
+app.use '/dist', express.static server.dist
+app.use '/libs', express.static server.libs
 app.use '/sandbox', express.static server.sandbox
 
 app.get '/', (req, res) -> res.render 'index'
-
+app.get '*', (req, res) -> res.render req.originalUrl.substr(1)
 
 app.listen server.port, ->
 	console.log "Express is listening on #{server.port}!\n"
