@@ -4,7 +4,7 @@ import bitmovin from 'BitmovinBundle'
 # Local
 import _ from 'lodash-es'
 # import Comscore from './comscore'
-import { Clip } from './comscore-clip'
+import { Ad, Content } from './comscore-clip'
 
 # TODO: Add validation if it is avaliable in the browser
 import StreamSense from 'streamsense'
@@ -142,14 +142,13 @@ class Analytics
 				conf = player.getConfig()
 
 				@currentClipIndex += 1
-				contentClip = new Clip
-					id: conf.source.contentId || 0
-					name: conf.source.title || 'title_not_defined'
+				contentClip = new Content
+					id: conf.source.contentId || null
+					name: conf.source.title || null
 					duration: (player.getDuration() * 1000) || 0
-					ad: false
 					url: 'https://example.com/test.mp4'
 
-				@tracker.setClip contentClip.getRawClip()
+				@tracker.setClip contentClip.serialize()
 				@contentDefined = true
 				samplePlaylist.push contentClip
 
@@ -171,16 +170,15 @@ class Analytics
 
 		# Configure ad and inspect ad type pre/mid/post
 		@currentClipIndex += 1
-		ad = new Clip
+		ad = new Ad
 			id: 0
-			ad: true
 			duration: e.duration * 1000
 			index: @currentClipIndex
 		switch e.timeOffset
 			when 'pre' then ad.setPre()
 			when 'post' then ad.setPost()
 			else ad.setMid()
-		@tracker.setClip ad.getRawClip()
+		@tracker.setClip ad.serialize()
 
 	onAdSkipped: (e) -> @onAdFinished e
 	onAdError: (e) -> @onAdFinished e
