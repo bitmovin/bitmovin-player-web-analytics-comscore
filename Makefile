@@ -17,48 +17,59 @@ COFFEE = coffeescript/register
 REPORTER = spec
 
 
+serve: watch sandbox ## Start a dev server
 
-buildCleanDist: ## Build a clean production version with all the minifications and optimizations
-	@ NODE_ENV=develop \
-		$(bin)/webpack --config ./build/config-webpack-dist.coffee
 
-develop: ## Start a dev server
+watch: ## Launch watcher
 	@ NODE_ENV=develop \
-		$(bin)/coffee ./build/run-dev-server.coffee
+		$(bin)/microbundle watch
+
+.PHONY: sandbox
+sandbox: ## Server sandbox
+	@ NODE_ENV=develop \
+		$(bin)/coffee ./scripts/run-sanbox.coffee
+
+build-prod: ## Build a clean production version with all the minifications and optimizations
+	@ NODE_ENV=production \
+		$(bin)/microbundle
+
+
 
 .PHONY: test
 test: ## Run tests in node
 	@ NODE_ENV=test \
-		$(bin)/mocha-webpack \
-		--webpack-config ./build/config-webpack-test.coffee \
-		--reporter $(REPORTER) \
-		"test/**/*.{js,ts,coffee}"
+		$(bin)/mocha \
+		--require ts-node/register \
+		--require coffeescript/register \
+		"src/__tests__/**/*.spec.{js,ts,coffee}"
 
 watchAndTest: ## Run tests in node in a watch mode
 	@ NODE_ENV=test \
-		$(bin)/mocha-webpack \
+		$(bin)/mocha \
 		--watch \
-		--webpack-config ./build/config-webpack-test.coffee \
-		--reporter $(REPORTER) \
-		"test/**/*.{js,ts,coffee}"
+		--watch-extensions ts,js,coffee \
+		--require ts-node/register \
+		--require coffeescript/register \
+		"src/__tests__/**/*.spec.{js,ts,coffee}"
 
-.PHONY: coverage
-coverage: ## Run tests and generate coverage report
-	@ NODE_ENV=coverage \
-		$(bin)/nyc \
-		$(bin)/mocha-webpack \
-		--webpack-config ./build/config-webpack-test.coffee \
-		--reporter $(REPORTER) \
-		"test/**/*.{js,ts,coffee}"
 
-showCoverage: ## Launch an http server that will server coverage html
-	@ NODE_ENV=coverage \
-		$(bin)/http-server \
-		-p 9022 ./.tmp/coverage/lcov-report
+# .PHONY: coverage
+# coverage: ## Run tests and generate coverage report
+# 	@ NODE_ENV=coverage \
+# 		$(bin)/nyc \
+# 		$(bin)/mocha-webpack \
+# 		--webpack-config ./scripts/config-webpack-test.coffee \
+# 		--reporter $(REPORTER) \
+# 		"test/**/*.{js,ts,coffee}"
+
+# showCoverage: ## Launch an http server that will server coverage html
+# 	@ NODE_ENV=coverage \
+# 		$(bin)/http-server \
+# 		-p 9022 ./.tmp/lcov-report
 
 
 .PHONY: lint
-lint: ## Run test coverage
+lint: ## Run a typescript linter
 	@ NODE_ENV=develop \
 		$(bin)/tslint \
 		-c ./tslint.json \
@@ -71,15 +82,7 @@ lint: ## Run test coverage
 # -- Utils
 launchInterceptor: ## Start interceptor
 	@ NODE_ENV=develop \
-		$(bin)/coffee ./build/run-comscore-mock-server.coffee
-
-launchSandbox: ## Start a sandbox with prod build
-	@ NODE_ENV=develop \
-		$(bin)/coffee ./build/run-sandbox.coffee
-
-# validateProdBuild: ## Prebuild with test files
-# 	@ NODE_ENV=develop \
-# 		$(bin)/http-server -p 9797 ./dist
+		$(bin)/coffee ./scripts/run-comscore-mock-server.coffee
 
 
 

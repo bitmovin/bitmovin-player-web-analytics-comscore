@@ -3,10 +3,9 @@
     "src/comscore-clip.ts"
   ],
   "compilerOptions": {
-    "noImplicitAny": true,
+    "noImplicitAny": false,
     "target": "es5",
     "declaration": true,
-    "lib": ["es6", "dom", "scripthost"],
     "sourceMap": true
   }
 }

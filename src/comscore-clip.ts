@@ -49,10 +49,9 @@ let ct = {
 */
 
 
-class Clip {
+export class Clip {
 
   id: any
-  index: number
 
   ct: string
   live: boolean
@@ -110,7 +109,7 @@ class Clip {
 
 }
 
-class Ad extends Clip {
+export class Ad extends Clip {
   constructor(metadata: any) {
     super(metadata)
     // Override parent defaults
@@ -149,7 +148,7 @@ class Ad extends Clip {
 
 }
 
-class Content extends Clip {
+export class Content extends Clip {
 
   ugc: boolean
   premium: boolean
@@ -264,11 +263,4 @@ class Content extends Clip {
     }
   }
 
-}
-
-export {
-  Clip as Clip,
-  Clip as default,
-  Ad as Ad,
-  Content as Content,
 }

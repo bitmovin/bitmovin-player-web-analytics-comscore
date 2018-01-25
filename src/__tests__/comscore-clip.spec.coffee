@@ -6,21 +6,16 @@ path = require 'path'
 
 process.env.DEBUG = 'bt-comscore:*'
 
-import Clip from '../src/comscore-clip.ts'
-import { Ad, Content } from '../src/comscore-clip.ts'
+{ Ad, Content, Clip } = require '../comscore-clip.ts'
 
 try
 	describe 'Clip tests: ', ->
 		delay = (t, f) -> setTimeout f, t
-		before ->
-			# server.recreateDatabase()
+		before -> # server.recreateDatabase()
+		beforeEach -> # server.truncateAll()
 
-		beforeEach ->
-			# server.truncateAll()
-
-		it 'Test the test runner', (done) ->
+		it 'Test the test runner', ->
 			c = new Clip id: 12
-			done()
 
 		it 'Clip constructor should throw on empty Clip config or lack of id', ->
 			should.Throw -> new Clip()
