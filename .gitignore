@@ -17,6 +17,10 @@ npm-debug.log
 .idea
 .vscode
 
+.cache
+.tmp
+.rpt2_cache
+
 # Logs and stats
 .tmp
 stats.json
