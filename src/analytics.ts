@@ -1,14 +1,16 @@
 import { Ad, Content } from './comscore-clip';
+import {
+  Player, PlayerAPI, PlaybackEvent, AdEvent, PlayerEventBase,
+} from 'bitmovin-player';
 
 // Public
 declare var ns_: any;
 declare var window: any;
-declare type PlayerType = any; // TODO use player API type definitions once available
-
+declare type Player = PlayerAPI; // TODO use player API type definitions once available
 
 export class Analytics {
 
-  private player: PlayerType;
+  private player: Player;
   private tracker: any;
   private config: any;
 
@@ -67,43 +69,37 @@ export class Analytics {
   }
 
   registerCoreEvents() {
-    let coreEvents = [
-    'onReady', 'onPlay', 'onPaused',
-    'onPlaybackFinished', 'onSourceLoaded', 'onSourceUnloaded', 'onTimeChanged',
-    'onSeek', 'onSeeked', 'onError', 'onAdStarted', 'onAdFinished', 'onAdSkipped', 'onAdError',
-    'onStallStarted', 'onStallEnded'];
-
-    // TODO: Remove when dev is done
-    coreEvents.forEach((name) => {
-      if (typeof this[name] === 'function') {
-        this.player.addEventHandler(name, (payload) => {
-          if (this.debug) {
-            console.log(`${name}: `, payload);
-          }
-          this[name].apply(this, [payload]);
-        });
-      }
-    });
+    this.player.on(this.player.exports.PlayerEvent.Playing, this.playing)
+    this.player.on(this.player.exports.PlayerEvent.Paused, this.paused)
+    this.player.on(this.player.exports.PlayerEvent.PlaybackFinished, this.playbackFinished)
+    this.player.on(this.player.exports.PlayerEvent.AdStarted, this.adStarted)
+    this.player.on(this.player.exports.PlayerEvent.AdFinished, this.adFinished)
+    this.player.on(this.player.exports.PlayerEvent.AdSkipped, this.adSkipped)
+    this.player.on(this.player.exports.PlayerEvent.AdError, this.adError)
+    this.player.on(this.player.exports.PlayerEvent.StallStarted, this.stallStarted)
+    this.player.on(this.player.exports.PlayerEvent.StallEnded, this.stallEnded)
   }
 
   playbackHasStarted() {
     this.player.isPlaying() || !this.player.isPaused();
   }
 
-  onPaused(payload) {
+  private paused = (event: PlaybackEvent) => {
+    console.log('paused')
     console.log('time: ', this.player.getCurrentTime());
     this.tracker.notifyPause(this.player.getCurrentTime());
   }
 
   // - Define a content clip if it is appropriate
-  onPlay(payload) {
+  private playing = (event: PlaybackEvent) => {
+    console.log('playing')
     if (this.playbackHasStarted()) {
       if (!this.contentDefined && !this.isAd) {
         console.log('Defining content Clip');
         let conf = this.player.getConfig();
         let contentClip = new Content({
-          id: conf.source.contentId || null,
-          name: conf.source.title || null,
+          // id: this.player.getSource().contentId || null,
+          // name: conf.source.title || null,
           duration: (this.player.getDuration() * 1000) || 0,
           url: 'https://example.com/test.mp4'
         });
@@ -123,61 +119,68 @@ export class Analytics {
   	- switch analytics into an AD mode
   	- register a new Clip with a Comscore SDK
   */
-  onAdStarted(e) {
+  private adStarted = (event: AdEvent) => {
+    console.log('adStarted')
     this.isAd = true;
 
     // Configure ad and inspect ad type pre/mid/post
-    let ad = new Ad({
-      id: 0,
-      duration: e.duration * 1000
-    });
-    switch (e.timeOffset) {
-      case 'pre':
-        ad.setPre();
-        break;
-      case 'post':
-        ad.setPost();
-        break;
-      default:
-        ad.setMid();
-    }
-    this.tracker.getPlaybackSession().setAsset(ad.serialize());
+    // let ad = new Ad({
+    //   id: 0,
+    //   duration: event.ad * 1000
+    // });
+    // switch (event.timeOffset) {
+    //   case 'pre':
+    //     ad.setPre();
+    //     break;
+    //   case 'post':
+    //     ad.setPost();
+    //     break;
+    //   default:
+    //     ad.setMid();
+    // }
+    // this.tracker.getPlaybackSession().setAsset(ad.serialize());
   }
 
-  onAdSkipped(e) {
-    this.onAdFinished(e);
+  private adSkipped = (event: AdEvent) => {
+    console.log('adSkipped')
+    this.adFinished(event);
   }
 
-  onAdError(e) {
-    this.onAdFinished(e);
+  private adError = (event) => {
+    console.log('adError')
+    this.adFinished(event);
   }
 
-  onAdFinished(e) {
+  private adFinished = (event: AdEvent) => {
+    console.log('adFinished')
     this.isAd = false;
     this.tracker.notifyEnd(this.player.getCurrentTime());
+  }
+
+  private playbackFinished = (event: PlayerEventBase) => {
+    console.log('playbackFinished')
+    this.sessionIsActive = false;
+  }
+
+  private stallStarted = (event: PlayerEventBase) => {
+    console.log('stallStarted')
+    this.tracker.notifyBufferStart(this.player.getCurrentTime());
+  }
+
+  private stallEnded = (event: PlayerEventBase) => {
+    console.log('stallEnded')
+    this.tracker.notifyBufferStop(this.player.getCurrentTime());
   }
 
   /*
   	- If there is no active session, go make one
   */
-  onPlaybackFinished(e) {
-    this.sessionIsActive = false;
-  }
-
   startPlaybackSession() {
     if (this.sessionIsActive === true) {
       throw new Error('Don\'t start another session before ending the last one');
     }
     this.tracker.createPlaybackSession();
     this.sessionIsActive = true;
-  }
-
-  onStallStarted(e) {
-    this.tracker.notifyBufferStart(this.player.getCurrentTime());
-  }
-
-  onStallEnded(e) {
-    this.tracker.notifyBufferStop(this.player.getCurrentTime());
   }
 
 };
