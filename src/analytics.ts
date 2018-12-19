@@ -63,12 +63,12 @@ export class Analytics {
     this.tracker = new ns_.StreamingAnalytics(c);
     console.log('tracker', this.tracker);
     window._comscoreshit = this.tracker;
-    this.registerCoreEvents();
+    this.registerPlayerEvents();
 
     return this;
   }
 
-  registerCoreEvents() {
+  registerPlayerEvents() {
     this.player.on(this.player.exports.PlayerEvent.Playing, this.playing)
     this.player.on(this.player.exports.PlayerEvent.Paused, this.paused)
     this.player.on(this.player.exports.PlayerEvent.PlaybackFinished, this.playbackFinished)
