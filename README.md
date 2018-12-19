@@ -39,8 +39,6 @@ or add `comscore-plugin.min.js` directly
 
 // or your own local copy
 <script src="/local/path/comscore-plugin.min.js"></script>
-
-
 ```
 
 
@@ -60,15 +58,15 @@ or add `comscore-plugin.min.js` directly
       },
       ...
     };
-    var player = bitmovin.player('player');
+    var player = new bitmovin.player.Player(document.getElementById('player'), playerConfig);
 
     // A Comscore instance is always tied to one player instance
     var comscore = new bitmovin.player.analytics.Comscore(player, {
       clientId: 'COMSCORE_CLIENT_ID'
     });
 
-    player.setup(playerConfig).then(function() {
-      console.log('player loaded');
+    player.load(source).then(function() {
+      console.log('player source loaded');
     }, function(reason) {
       console.error('player setup failed', reason);
     });
