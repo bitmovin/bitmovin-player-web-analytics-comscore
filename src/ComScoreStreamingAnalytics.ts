@@ -29,7 +29,6 @@ export class ComScoreStreamingAnalytics {
     this.player = player
     this.metadata = metadata
     this.streamingAnalytics = new ns_.ReducedRequirementsStreamingAnalytics()
-    console.log('tracker', this.streamingAnalytics)
     this.registerPlayerEvents()
 
     return this
@@ -80,7 +79,7 @@ export class ComScoreStreamingAnalytics {
   }
 
   private adBreakStarted = (event: AdBreakEvent) => {
-    console.log('adStarted')
+    console.log('adBreakStarted')
     this.adBreakScheduleTime = event.adBreak.scheduleTime
   }
 
