@@ -1,34 +1,35 @@
 {
   "name": "bitmovin-player-analytics-comscore",
-  "version": "0.0.2",
+  "version": "0.9.0",
   "description": "ComScore analytics integration for the Bitmovin Player",
-  "main": "dist/bitmovinplayer-analytics-comscore.js",
-  "jsnext:main": "dist/bitmovinplayer-analytics-comscore.esm.js",
-  "module": "dist/bitmovinplayer-analytics-comscore.esm.js",
-  "dev:main": "dist/bitmovinplayer-analytics-comscore.dev.js",
-  "minified:main": "dist/bitmovinplayer-analytics-comscore.min.js",
-  "scripts": {
-    "test": "NODE_ENV=test mocha --require ts-node/register --require coffeescript/register 'src/__tests__/**/*.spec.{js,ts,coffee}'",
-    "build-prod": "microbundle",
-    "mock": "coffee ./scripts/run-comscore-mock-server.coffee",
-    "sandbox": "coffee ./scripts/run-sandbox.coffee",
-    "watch": "microbundle watch",
-    "build": "microbundle",
-    "start": "microbundle watch & coffee ./scripts/run-sandbox.coffee"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bitmovin/bitmovin-player-analytics-comscore.git"
   },
-  "author": "Nick Olszanski",
-  "license": "MIT",
+  "main": "bitmovinplayer-analytics-comscore.js",
+  "module": "lib/index.js",
+  "es2015": "lib-esm/index.js",
+  "scripts": {
+    "lint": "node_modules/.bin/tslint -c tslint.json 'src/**/*.ts'",
+    "start": "npm run build && ./node_modules/.bin/webpack-dev-server --open --config webpack.dev.js",
+    "clean": "rm -rf ./dist",
+    "copy": "cp ./package.json ./dist/package.json",
+    "build": "npm run build:describe && npm run lint && npm run clean && npm run build:lib && npm run build:esm && npm run build:bundle && npm run copy",
+    "build:describe": "echo \"Building Player Integration...\"",
+    "build:lib": "./node_modules/.bin/tsc --module commonjs --outDir ./dist/lib --declaration",
+    "build:esm": "./node_modules/.bin/tsc --module es6 --outDir ./dist/lib-esm --declaration",
+    "build:bundle": "./node_modules/.bin/webpack --config webpack.prod.js"
+  },
+  "author": "Bitmovin",
+  "license": "ISC",
   "devDependencies": {
-    "chai": "^4.1.2",
-    "coffeescript": "^2.2.3",
-    "express": "^4.16.3",
-    "lodash": "^4.17.5",
-    "microbundle": "0.4.4",
-    "mocha": "^5.0.4",
-    "pug": "^2.0.1",
-    "ts-node": "^5.0.1",
-    "tslint": "^5.9.1",
-    "typescript": "^2.7.2",
-    "bitmovin-player": "^8.0.3"
+    "bitmovin-player": "^8.0.3",
+    "ts-loader": "^5.3.1",
+    "tslint": "^5.11.0",
+    "typescript": "^3.2.2",
+    "webpack": "^4.27.1",
+    "webpack-cli": "^3.1.2",
+    "webpack-dev-server": "^3.1.10",
+    "webpack-merge": "^4.1.5"
   }
 }
