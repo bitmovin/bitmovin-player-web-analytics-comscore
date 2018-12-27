@@ -1,15 +1,18 @@
 import { ComScoreMediaType, ComScoreMetadata, ComScoreStreamingAnalytics } from './ComScoreStreamingAnalytics';
 import { PlayerAPI } from 'bitmovin-player';
+import { ComScoreLogger } from './ComScoreLogger';
 
 export class ComScoreAnalytics {
   private static started: boolean = false
   private static configuration: ComScoreConfiguration
+  private static logger: ComScoreLogger
 
   /**
    * Starts ComScore app tracking
    * @param configuration - Configuration object for your ComScore specific identifiers
    */
   public static start(configuration: ComScoreConfiguration) {
+    this.logger = new ComScoreLogger(configuration)
     if (typeof ns_.comScore === 'undefined') {
       console.error('ComScore script missing, cannot init ComScoreAnalytics. '
         + 'Please load the ComScore script (comscore.ott.1.5.0.170216.min.js) before Bitmovin\'s ComScore integration.');
@@ -22,7 +25,6 @@ export class ComScoreAnalytics {
     }
 
     ComScoreAnalytics.configuration = configuration
-
     if (!ComScoreAnalytics.started) {
       ns_.comScore.setPlatformAPI(ns_.PlatformAPIs.html5)
       ns_.comScore.setAppContext(this)
@@ -31,6 +33,7 @@ export class ComScoreAnalytics {
       ns_.comScore.setAppName(configuration.applicationName)
       ns_.comScore.setAppVersion(configuration.applicationVersion)
       ComScoreAnalytics.started = true
+      this.logger.log('ComScoreAnalytics Started')
     }
   }
 
@@ -45,14 +48,15 @@ export class ComScoreAnalytics {
       console.error('ComScoreConfiguration must be started before you call createComScoreStreamingAnalytics')
       return
     }
-
-    return new ComScoreStreamingAnalytics(player, metadata)
+    this.logger.log('Creating ComScoreStreamingAnalytics')
+    return new ComScoreStreamingAnalytics(player, metadata, this.configuration)
   }
 
   /**
    * Call this method whenever your page enters the foreground
    */
   public static enterForeground() {
+    this.logger.log('ComScoreAnalytics enterForeground')
     ns_.comScore.onEnterForeground()
   }
 
@@ -60,6 +64,7 @@ export class ComScoreAnalytics {
    * Call this method whenever your page exits the foreground
    */
   public static exitForeground() {
+    this.logger.log('ComScoreAnalytics exitForeground')
     ns_.comScore.onExitForeground()
   }
 
@@ -67,6 +72,7 @@ export class ComScoreAnalytics {
    * Call this method to close the current ComScoreTracking
    */
   public static close() {
+    this.logger.log('ComScoreAnalytics close')
     ns_.comScore.close()
   }
 }

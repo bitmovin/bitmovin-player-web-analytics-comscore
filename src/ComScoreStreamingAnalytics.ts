@@ -2,19 +2,22 @@ import {
   PlayerAPI, PlaybackEvent, AdEvent, PlayerEventBase, LinearAd, AdBreakEvent,
 } from 'bitmovin-player';
 import { ComScoreConfiguration } from './ComScoreAnalytics';
+import { ComScoreLogger } from './ComScoreLogger';
 
 // Public
 
 export class ComScoreStreamingAnalytics {
-
   private player: PlayerAPI
   private streamingAnalytics: ns_.ReducedRequirementsStreamingAnalytics
   private comScoreState: ComScoreState = ComScoreState.Stopped
   private currentAd?: LinearAd
   private metadata: ComScoreMetadata
   private adBreakScheduleTime?: number
+  private logger: ComScoreLogger
 
-  constructor(player: PlayerAPI, metadata: ComScoreMetadata = { mediaType: ComScoreMediaType.Other }) {
+  constructor(player: PlayerAPI, metadata: ComScoreMetadata = { mediaType: ComScoreMediaType.Other },
+              configuration: ComScoreConfiguration) {
+    this.logger = new ComScoreLogger(configuration)
     if (!player) {
       console.error('player must not be null')
       return
@@ -57,7 +60,6 @@ export class ComScoreStreamingAnalytics {
   }
 
   private paused = (event: PlaybackEvent) => {
-    console.log('paused')
     this.stopComScoreTracking()
   }
 
@@ -70,7 +72,6 @@ export class ComScoreStreamingAnalytics {
   }
 
   private adStarted = (event: AdEvent) => {
-    console.log('adStarted')
     if (event.ad.isLinear) {
       this.currentAd = event.ad as LinearAd
       this.transitionToAd()
@@ -78,37 +79,32 @@ export class ComScoreStreamingAnalytics {
   }
 
   private adBreakStarted = (event: AdBreakEvent) => {
-    console.log('adBreakStarted')
     this.adBreakScheduleTime = event.adBreak.scheduleTime
   }
 
   private adSkipped = (event: AdEvent) => {
-    console.log('adSkipped')
     this.adFinished(event)
   }
 
   private adError = (event) => {
-    console.log('adError')
-    this.adFinished(event)
+    if (this.currentAd) {
+      this.adFinished(event)
+    }
   }
 
   private adFinished = (event: AdEvent) => {
-    console.log('adFinished')
     this.transitionToVideo()
   }
 
   private playbackFinished = (event: PlayerEventBase) => {
-    console.log('adFinished')
     this.stopComScoreTracking()
   }
 
   private stallStarted = (event: PlayerEventBase) => {
-    console.log('adFinished')
     this.stopComScoreTracking()
   }
 
   private stallEnded = (event: PlayerEventBase) => {
-    console.log('adFinished')
     this.transitionToVideo()
   }
 
@@ -116,6 +112,7 @@ export class ComScoreStreamingAnalytics {
     if (this.comScoreState !== ComScoreState.Stopped) {
       this.streamingAnalytics.stop()
       this.comScoreState = ComScoreState.Stopped
+      this.logger.log('ComScoreStreamingAnalytics stopped')
     }
   }
 
@@ -126,6 +123,8 @@ export class ComScoreStreamingAnalytics {
         ns_st_cl: this.currentAd.duration,
       }, this.adType())
       this.comScoreState = ComScoreState.Advertisement
+      this.logger.log('ComScoreStreamingAnalytics transitioned to Ad')
+
     }
   }
 
@@ -133,9 +132,9 @@ export class ComScoreStreamingAnalytics {
     if (this.comScoreState !== ComScoreState.Video) {
       this.stopComScoreTracking()
       let rawData = this.rawData(this.player.getDuration())
-      console.log(rawData)
       this.streamingAnalytics.playVideoContentPart(rawData, this.contentType())
       this.comScoreState = ComScoreState.Video
+      this.logger.log('ComScoreStreamingAnalytics transitioned to Video - ' + JSON.stringify(rawData));
     }
   }
 
