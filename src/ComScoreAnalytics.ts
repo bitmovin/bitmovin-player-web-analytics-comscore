@@ -1,7 +1,5 @@
 import { ComScoreMediaType, ComScoreMetadata, ComScoreStreamingAnalytics } from './ComScoreStreamingAnalytics';
 import { PlayerAPI } from 'bitmovin-player';
-// Public
-declare var ns_: any;
 
 export class ComScoreAnalytics {
   private static started: boolean = false
@@ -41,7 +39,8 @@ export class ComScoreAnalytics {
    * @param player - Bitmovin Player to track
    * @param metadata - ComScoreMetadata for the source that will be loaded in the player
    */
-  public static createComScoreStreamingAnalytics(player: PlayerAPI, metadata: ComScoreMetadata = {mediaType: ComScoreMediaType.Other}): ComScoreStreamingAnalytics {
+  public static createComScoreStreamingAnalytics(player: PlayerAPI,
+                                                 metadata: ComScoreMetadata = { mediaType: ComScoreMediaType.Other }): ComScoreStreamingAnalytics {
     if (!ComScoreAnalytics.started) {
       console.error('ComScoreConfiguration must be started before you call createComScoreStreamingAnalytics')
       return
@@ -72,7 +71,7 @@ export class ComScoreAnalytics {
   }
 }
 
-export class ComScoreConfiguration {
+export interface ComScoreConfiguration {
   /**
    * PublisherId assigned by ComScore (also known as c2 value)
    */
@@ -96,5 +95,5 @@ export class ComScoreConfiguration {
   /**
    * Toggles debug output for ComScoreAnalytics integration
    */
-  debug: boolean = false
+  debug: boolean
 }

@@ -54,7 +54,31 @@
   var container = document.getElementById('player');
   var playerConf = {
     key: 'YOUR-PLAYER-KEY',
-    advertising: {}
+    advertising: {
+      adBreaks: [{
+        tag: {
+          url: 'https://pubads.g.doubleclick.net/gampad/ads?sz=640x480&iu=/32573358/skippable_ad_unit&impl=s&gdfp_req=1&env=vp&output=xml_vast2&unviewed_position_start=1&url=http%3A%2F%2Freleasetest.dash-player.com%2Fads%2F&description_url=[description_url]&correlator=[random]',
+          type: 'vast',
+        },
+        id: 'ad-pre-skippable',
+        position: 'pre',
+      }, {
+        tag: {
+          url: 'https://pubads.g.doubleclick.net/gampad/ads?sz=640x480&iu=/32573358/skippable_ad_unit&impl=s&gdfp_req=1&env=vp&output=xml_vast2&unviewed_position_start=1&url=http%3A%2F%2Freleasetest.dash-player.com%2Fads%2F&description_url=[description_url]&correlator=[random]',
+          type: 'vast',
+        },
+        id: 'ad-30-skippable',
+        position: '30%',
+      }, {
+        tag: {
+          url: 'https://pubads.g.doubleclick.net/gampad/ads?sz=640x480&iu=/32573358/2nd_test_ad_unit&ciu_szs=300x100&impl=s&gdfp_req=1&env=vp&output=vast&unviewed_position_start=1&url=[referrer_url]&description_url=[description_url]&correlator=[random]',
+          type: 'vast',
+        },
+        id: 'ad-post-skippable',
+        position: 'post',
+      },
+      ],
+    },
   };
 
   var source = {
@@ -69,7 +93,6 @@
   var player = new bitmovin.player.Player(container, playerConf);
 
   player.load(source).then(function() {
-    scheduleAds()
     console.log('Successfully created Bitmovin Player instance');
   }, function(reason) {
     console.error('Error while creating Bitmovin Player instance');

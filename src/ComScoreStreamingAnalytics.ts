@@ -4,23 +4,22 @@ import {
 import { ComScoreConfiguration } from './ComScoreAnalytics';
 
 // Public
-declare var ns_: any;
 
 export class ComScoreStreamingAnalytics {
 
   private player: PlayerAPI
-  private streamingAnalytics: any
+  private streamingAnalytics: ns_.ReducedRequirementsStreamingAnalytics
   private comScoreState: ComScoreState = ComScoreState.Stopped
   private currentAd?: LinearAd
   private metadata: ComScoreMetadata
   private adBreakScheduleTime?: number
 
   constructor(player: PlayerAPI, metadata: ComScoreMetadata = { mediaType: ComScoreMediaType.Other }) {
-    if (player == null) {
+    if (!player) {
       console.error('player must not be null')
       return
     }
-    if (metadata == null) {
+    if (!metadata) {
       console.error('ComScoreMetadata must not be null')
       return
     }
@@ -140,9 +139,9 @@ export class ComScoreStreamingAnalytics {
     }
   }
 
-  private adType(): any {
+  private adType(): ns_.ReducedRequirementsStreamingAnalytics.AdType {
     if (this.player.isLive) {
-      return ns_.ReducedRequirementsStreamingAnalytics.AdType.LinearOnDemandMidRoll
+      return ns_.ReducedRequirementsStreamingAnalytics.AdType.LinearLive
     } else {
       if (this.currentAd) {
         if (this.adBreakScheduleTime === 0) {
@@ -183,7 +182,7 @@ export class ComScoreStreamingAnalytics {
     return data
   }
 
-  private contentType(): any {
+  private contentType(): ns_.ReducedRequirementsStreamingAnalytics.ContentType {
     switch (this.metadata.mediaType) {
       case ComScoreMediaType.LongFormOnDemand:
         return ns_.ReducedRequirementsStreamingAnalytics.ContentType.LongFormOnDemand
