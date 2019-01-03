@@ -139,7 +139,7 @@ export class ComScoreStreamingAnalytics {
   }
 
   private adType(): ns_.ReducedRequirementsStreamingAnalytics.AdType {
-    if (this.player.isLive) {
+    if (this.player.isLive()) {
       return ns_.ReducedRequirementsStreamingAnalytics.AdType.LinearLive
     } else {
       if (this.currentAd) {

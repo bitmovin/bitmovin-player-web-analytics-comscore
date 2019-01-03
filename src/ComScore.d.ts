@@ -7,25 +7,24 @@ declare namespace ns_ {
     stop(): void;
   }
 
-  /* tslint:disable */
-  class comScore {
-    static setPlatformAPI(platform: PlatformAPIs): void;
+  namespace comScore {
+    function setPlatformAPI(platform: PlatformAPIs): void;
 
-    static setCustomerC2(publisherId: string): void;
+    function setCustomerC2(publisherId: string): void;
 
-    static setPublisherSecret(publisherSecret: string): void;
+    function setPublisherSecret(publisherSecret: string): void;
 
-    static setAppName(appName: string): void;
+    function setAppName(appName: string): void;
 
-    static setAppVersion(appVersion: string): void;
+    function setAppVersion(appVersion: string): void;
 
-    static setAppContext(context: any): void;
+    function setAppContext(context: any): void;
 
-    static onEnterForeground(): void;
+    function onEnterForeground(): void;
 
-    static onExitForeground(): void;
+    function onExitForeground(): void;
 
-    static close(): void;
+    function close(): void;
   }
 
   namespace ReducedRequirementsStreamingAnalytics {
