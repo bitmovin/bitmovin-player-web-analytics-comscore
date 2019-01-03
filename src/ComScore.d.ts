@@ -38,7 +38,7 @@ declare namespace ns_ {
       BrandedOnDemandPostRoll,
       BrandedOnDemandContent,
       BrandedOnDemandLive,
-      Other
+      Other,
     }
 
     export enum ContentType {
@@ -49,14 +49,14 @@ declare namespace ns_ {
       UserGeneratedShortFormOnDemand,
       UserGeneratedLive,
       Bumper,
-      Other
+      Other,
     }
   }
 
   /* tslint:enable */
 
   enum PlatformAPIs {
-    html5
+    html5,
   }
 }
 

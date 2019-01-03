@@ -1,10 +1,10 @@
 import { ComScoreConfiguration } from './ComScoreAnalytics';
 
 export class ComScoreLogger {
-  private configuration: ComScoreConfiguration
+  private configuration: ComScoreConfiguration;
 
   constructor(configuration: ComScoreConfiguration) {
-    this.configuration = configuration
+    this.configuration = configuration;
   }
 
   public log(message: string): void {
