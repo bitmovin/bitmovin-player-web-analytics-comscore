@@ -30,7 +30,14 @@ export class ComScoreStreamingAnalytics {
     // Defaults
     this.player = player;
     this.metadata = metadata;
-    this.streamingAnalytics = new ns_.ReducedRequirementsStreamingAnalytics();
+    if (configuration.isOTT) {
+      this.streamingAnalytics = new ns_.ReducedRequirementsStreamingAnalytics();
+    } else {
+      this.streamingAnalytics = new ns_.ReducedRequirementsStreamingAnalytics({
+        publisherId: configuration.publisherId,
+      });
+
+    }
     this.registerPlayerEvents();
 
     return this;

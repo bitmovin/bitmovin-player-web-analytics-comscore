@@ -13,11 +13,6 @@ export class ComScoreAnalytics {
    */
   public static start(configuration: ComScoreConfiguration) {
     this.logger = new ComScoreLogger(configuration);
-    if (typeof ns_.comScore === 'undefined') {
-      console.error('ComScore script missing, cannot init ComScoreAnalytics. '
-        + 'Please load the ComScore script (comscore.ott.1.5.0.170216.min.js) before Bitmovin\'s ComScore integration.');
-      return;
-    }
 
     if (configuration == null) {
       console.error('ComScoreConfiguration must not be null');
@@ -25,16 +20,26 @@ export class ComScoreAnalytics {
     }
 
     ComScoreAnalytics.configuration = configuration;
-    if (!ComScoreAnalytics.started) {
-      ns_.comScore.setPlatformAPI(ns_.PlatformAPIs.html5);
-      ns_.comScore.setAppContext(this);
-      ns_.comScore.setCustomerC2(configuration.publisherId);
-      ns_.comScore.setPublisherSecret(configuration.publisherSecret);
-      ns_.comScore.setAppName(configuration.applicationName);
-      ns_.comScore.setAppVersion(configuration.applicationVersion);
-      ComScoreAnalytics.started = true;
-      this.logger.log('ComScoreAnalytics Started');
+
+    if (configuration.isOTT === true) {
+      if (typeof ns_.comScore === 'undefined') {
+        console.error('ComScore script missing, cannot init ComScoreAnalytics. '
+          + 'Please load the ComScore script (comscore.ott.1.5.0.170216.min.js) before Bitmovin\'s ComScore integration.');
+        return;
+      }
+
+      if (!ComScoreAnalytics.started) {
+        ns_.comScore.setPlatformAPI(ns_.PlatformAPIs.html5);
+        ns_.comScore.setAppContext(this);
+        ns_.comScore.setCustomerC2(configuration.publisherId);
+        ns_.comScore.setPublisherSecret(configuration.publisherSecret);
+        ns_.comScore.setAppName(configuration.applicationName);
+        ns_.comScore.setAppVersion(configuration.applicationVersion);
+      }
     }
+
+    ComScoreAnalytics.started = true;
+    this.logger.log('ComScoreAnalytics Started');
   }
 
   /**
@@ -56,24 +61,30 @@ export class ComScoreAnalytics {
    * Call this method whenever your page enters the foreground
    */
   public static enterForeground() {
-    this.logger.log('ComScoreAnalytics enterForeground');
-    ns_.comScore.onEnterForeground();
+    if (this.configuration.isOTT) {
+      this.logger.log('ComScoreAnalytics enterForeground');
+      ns_.comScore.onEnterForeground();
+    }
   }
 
   /**
    * Call this method whenever your page exits the foreground
    */
   public static exitForeground() {
-    this.logger.log('ComScoreAnalytics exitForeground');
-    ns_.comScore.onExitForeground();
+    if (this.configuration.isOTT) {
+      this.logger.log('ComScoreAnalytics exitForeground');
+      ns_.comScore.onExitForeground();
+    }
   }
 
   /**
    * Call this method to close the current ComScoreTracking
    */
   public static close() {
-    this.logger.log('ComScoreAnalytics close');
-    ns_.comScore.close();
+    if (this.configuration.isOTT) {
+      this.logger.log('ComScoreAnalytics close');
+      ns_.comScore.close();
+    }
   }
 }
 
@@ -99,7 +110,13 @@ export interface ComScoreConfiguration {
   applicationVersion: string;
 
   /**
+   * boolean indicating if the ComScore integration is being used in an OTT application.
+   */
+  isOTT: boolean;
+
+  /**
    * Toggles debug output for ComScoreAnalytics integration
    */
   debug: boolean;
+
 }

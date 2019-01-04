@@ -5,6 +5,9 @@ declare namespace ns_ {
     playVideoAdvertisement(metadata: any, contentType: any);
 
     stop(): void;
+
+    constructor();
+    constructor(configuration: any);
   }
 
   namespace comScore {
