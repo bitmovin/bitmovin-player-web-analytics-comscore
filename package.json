@@ -1,6 +1,6 @@
 {
   "name": "bitmovin-player-analytics-comscore",
-  "version": "0.9.0",
+  "version": "1.0.0",
   "description": "ComScore analytics integration for the Bitmovin Player",
   "repository": {
     "type": "git",
