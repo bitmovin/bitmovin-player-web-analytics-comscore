@@ -1,0 +1,29 @@
+# Don't check auto-generated stuff into git
+coverage
+node_modules
+.nyc_output
+
+# Build stuff
+dist
+.prepublish
+
+# Locks - one lock is enough. Might go out of sync
+yarn.lock
+shrinkwrap.yaml
+
+# Cruft
+.DS_Store
+npm-debug.log
+.idea
+.vscode
+
+.cache
+.tmp
+.rpt2_cache
+
+# Logs and stats
+.tmp
+stats.json
+prod-build-stats.json
+
+yarn-error.log
