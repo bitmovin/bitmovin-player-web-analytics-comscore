@@ -56,6 +56,7 @@ export class ComScoreStreamingAnalytics {
   private registerPlayerEvents(): void {
     this.player.on(this.player.exports.PlayerEvent.Playing, this.playing);
     this.player.on(this.player.exports.PlayerEvent.Paused, this.paused);
+    this.player.on(this.player.exports.PlayerEvent.SourceUnloaded, this.unloaded);
     this.player.on(this.player.exports.PlayerEvent.PlaybackFinished, this.playbackFinished);
     this.player.on(this.player.exports.PlayerEvent.AdStarted, this.adStarted);
     this.player.on(this.player.exports.PlayerEvent.AdFinished, this.adFinished);
@@ -67,6 +68,10 @@ export class ComScoreStreamingAnalytics {
   }
 
   private paused = (event: PlaybackEvent) => {
+    this.stopComScoreTracking();
+  }
+
+  private unloaded = (event: PlaybackEvent) => {
     this.stopComScoreTracking();
   }
 
