@@ -1,29 +1,29 @@
 {
-  "name": "bitmovin-player-analytics-comscore",
+  "name": "@bitmovin/player-integration-comscore",
   "version": "1.0.0",
   "description": "ComScore analytics integration for the Bitmovin Player",
   "repository": {
     "type": "git",
     "url": "https://github.com/bitmovin/bitmovin-player-analytics-comscore.git"
   },
-  "main": "bitmovinplayer-analytics-comscore.js",
-  "module": "lib/index.js",
-  "es2015": "lib-esm/index.js",
+  "main": "./dist/bitmovin-player-analytics-comscore.js",
+  "types": "./dist/bitmovin-player-analytics-comscore.d.ts",
   "scripts": {
     "lint": "node_modules/.bin/tslint -c tslint.json 'src/**/*.ts'",
     "start": "npm run build && ./node_modules/.bin/webpack-dev-server --open --config webpack.dev.js",
     "clean": "rm -rf ./dist",
-    "copy": "cp ./package.json ./dist/package.json",
-    "build": "npm run build:describe && npm run lint && npm run clean && npm run build:lib && npm run build:esm && npm run build:bundle && npm run copy",
+    "build": "npm run build:describe && npm run lint && npm run clean && npm run build:lib && npm run build:bundle",
     "build:describe": "echo \"Building Player Integration...\"",
     "build:lib": "./node_modules/.bin/tsc --module commonjs --outDir ./dist/lib --declaration",
     "build:esm": "./node_modules/.bin/tsc --module es6 --outDir ./dist/lib-esm --declaration",
-    "build:bundle": "./node_modules/.bin/webpack --config webpack.prod.js"
+    "build:bundle": "./node_modules/.bin/webpack --config webpack.prod.js",
+    "prepublishOnly": "npm run build"
   },
   "author": "Bitmovin",
   "license": "ISC",
   "devDependencies": {
     "bitmovin-player": "^8.0.3",
+    "create-file-webpack": "^1.0.2",
     "ts-loader": "^5.3.1",
     "tslint": "^5.11.0",
     "typescript": "^3.2.2",
