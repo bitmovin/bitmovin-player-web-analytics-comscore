@@ -3,7 +3,7 @@ import { PlayerAPI } from 'bitmovin-player';
 import { ComScoreLogger } from './ComScoreLogger';
 
 export class ComScoreAnalytics {
-  static started: boolean = false;
+  private static started: boolean = false;
   private static configuration: ComScoreConfiguration;
   private static logger: ComScoreLogger;
 
@@ -40,6 +40,10 @@ export class ComScoreAnalytics {
 
     ComScoreAnalytics.started = true;
     this.logger.log('ComScoreAnalytics Started');
+  }
+
+  public static isActive(): boolean {
+    return ComScoreAnalytics.started;
   }
 
   /**
