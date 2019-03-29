@@ -42,6 +42,10 @@ export class ComScoreAnalytics {
     this.logger.log('ComScoreAnalytics Started');
   }
 
+  public static isActive(): boolean {
+    return ComScoreAnalytics.started;
+  }
+
   /**
    * Creates a ComScoreStreamingAnalytics object that is used for tracking video playback
    * @param player - Bitmovin Player to track

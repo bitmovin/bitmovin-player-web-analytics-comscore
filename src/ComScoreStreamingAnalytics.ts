@@ -53,9 +53,27 @@ export class ComScoreStreamingAnalytics {
     this.metadata = metadata;
   }
 
+  destroy(): void {
+    this.player.off(this.player.exports.PlayerEvent.Playing, this.playing);
+    this.player.off(this.player.exports.PlayerEvent.Paused, this.paused);
+    this.player.off(this.player.exports.PlayerEvent.SourceUnloaded, this.unloaded);
+    this.player.off(this.player.exports.PlayerEvent.PlaybackFinished, this.playbackFinished);
+    this.player.off(this.player.exports.PlayerEvent.AdStarted, this.adStarted);
+    this.player.off(this.player.exports.PlayerEvent.AdFinished, this.adFinished);
+    this.player.off(this.player.exports.PlayerEvent.AdSkipped, this.adSkipped);
+    this.player.off(this.player.exports.PlayerEvent.AdError, this.adError);
+    this.player.off(this.player.exports.PlayerEvent.StallStarted, this.stallStarted);
+    this.player.off(this.player.exports.PlayerEvent.StallEnded, this.stallEnded);
+    this.player.off(this.player.exports.PlayerEvent.AdBreakStarted, this.adBreakStarted);
+    this.metadata = null;
+    this.player = null;
+    this.streamingAnalytics = null;
+  }
+
   private registerPlayerEvents(): void {
     this.player.on(this.player.exports.PlayerEvent.Playing, this.playing);
     this.player.on(this.player.exports.PlayerEvent.Paused, this.paused);
+    this.player.on(this.player.exports.PlayerEvent.SourceUnloaded, this.unloaded);
     this.player.on(this.player.exports.PlayerEvent.PlaybackFinished, this.playbackFinished);
     this.player.on(this.player.exports.PlayerEvent.AdStarted, this.adStarted);
     this.player.on(this.player.exports.PlayerEvent.AdFinished, this.adFinished);
@@ -67,6 +85,10 @@ export class ComScoreStreamingAnalytics {
   }
 
   private paused = (event: PlaybackEvent) => {
+    this.stopComScoreTracking();
+  }
+
+  private unloaded = (event: PlaybackEvent) => {
     this.stopComScoreTracking();
   }
 
