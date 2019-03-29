@@ -3,7 +3,7 @@ import { PlayerAPI } from 'bitmovin-player';
 import { ComScoreLogger } from './ComScoreLogger';
 
 export class ComScoreAnalytics {
-  private static started: boolean = false;
+  static started: boolean = false;
   private static configuration: ComScoreConfiguration;
   private static logger: ComScoreLogger;
 
