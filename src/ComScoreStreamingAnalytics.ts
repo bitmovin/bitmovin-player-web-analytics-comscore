@@ -260,9 +260,9 @@ export class ComScoreMetadata {
   digitalAirdate?: string;
   tvAirdate?: string;
   stationTitle?: string;
-  c3?: string;
-  c4?: string;
-  c6?: string;
+  c3: string = '*null';
+  c4: string = '*null';
+  c6: string = '*null';
   completeEpisode?: boolean;
   feedType?: string;
 }
