@@ -1,6 +1,4 @@
-import {
-  PlayerAPI, PlaybackEvent, AdEvent, PlayerEventBase, LinearAd, AdBreakEvent,
-} from 'bitmovin-player';
+import { AdBreakEvent, AdEvent, LinearAd, PlaybackEvent, PlayerAPI, PlayerEventBase } from 'bitmovin-player';
 import { ComScoreConfiguration } from './ComScoreAnalytics';
 import { ComScoreLogger } from './ComScoreLogger';
 
@@ -15,7 +13,7 @@ export class ComScoreStreamingAnalytics {
   private adBreakScheduleTime?: number;
   private logger: ComScoreLogger;
 
-  constructor(player: PlayerAPI, metadata: ComScoreMetadata = { mediaType: ComScoreMediaType.Other },
+  constructor(player: PlayerAPI, metadata: ComScoreMetadata = new ComScoreMetadata(),
               configuration: ComScoreConfiguration) {
 
     if (configuration) {
@@ -246,7 +244,7 @@ enum ComScoreState {
 }
 
 export class ComScoreMetadata {
-  mediaType: ComScoreMediaType;
+  mediaType: ComScoreMediaType = ComScoreMediaType.Other;
   uniqueContentId?: string;
   publisherBrandName?: string;
   programTitle?: string;

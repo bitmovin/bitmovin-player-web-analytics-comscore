@@ -1,10 +1,10 @@
-import { ComScoreConfiguration } from './ComScoreAnalytics';
-
 export class ComScoreLogger {
   private static enabled: boolean;
+
   public static enable() {
     this.enabled = true;
   }
+
   public static disable() {
     this.enabled = false;
   }

@@ -1,4 +1,4 @@
-import { ComScoreMediaType, ComScoreMetadata, ComScoreStreamingAnalytics } from './ComScoreStreamingAnalytics';
+import { ComScoreMetadata, ComScoreStreamingAnalytics } from './ComScoreStreamingAnalytics';
 import { PlayerAPI } from 'bitmovin-player';
 import { ComScoreLogger } from './ComScoreLogger';
 
@@ -57,7 +57,7 @@ export class ComScoreAnalytics {
    * @param metadata - ComScoreMetadata for the source that will be loaded in the player
    */
   public static createComScoreStreamingAnalytics(player: PlayerAPI,
-                                                 metadata: ComScoreMetadata = { mediaType: ComScoreMediaType.Other }): ComScoreStreamingAnalytics {
+                                                 metadata: ComScoreMetadata = new ComScoreMetadata()): ComScoreStreamingAnalytics {
     if (!ComScoreAnalytics.started) {
       ComScoreLogger.error('ComScoreConfiguration must be started before you call createComScoreStreamingAnalytics');
       return;
