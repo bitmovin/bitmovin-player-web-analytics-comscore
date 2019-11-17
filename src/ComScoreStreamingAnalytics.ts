@@ -17,13 +17,21 @@ export class ComScoreStreamingAnalytics {
 
   constructor(player: PlayerAPI, metadata: ComScoreMetadata = { mediaType: ComScoreMediaType.Other },
               configuration: ComScoreConfiguration) {
-    this.logger = new ComScoreLogger(configuration);
+
+    if (configuration) {
+      if (configuration.debug === true) {
+        ComScoreLogger.enable();
+      } else {
+        ComScoreLogger.disable();
+      }
+    }
+
     if (!player) {
-      console.error('player must not be null');
+      ComScoreLogger.error('player must not be null');
       return;
     }
     if (!metadata) {
-      console.error('ComScoreMetadata must not be null');
+      ComScoreLogger.error('ComScoreMetadata must not be null');
       return;
     }
 
@@ -141,7 +149,7 @@ export class ComScoreStreamingAnalytics {
     if (this.comScoreState !== ComScoreState.Stopped) {
       this.streamingAnalytics.stop();
       this.comScoreState = ComScoreState.Stopped;
-      this.logger.log('ComScoreStreamingAnalytics stopped');
+      ComScoreLogger.log('ComScoreStreamingAnalytics stopped');
     }
   }
 
@@ -149,11 +157,10 @@ export class ComScoreStreamingAnalytics {
     if (this.comScoreState !== ComScoreState.Advertisement) {
       this.stopComScoreTracking();
       this.streamingAnalytics.playVideoAdvertisement({
-        ns_st_cl: this.currentAd.duration,
+        ns_st_cl: Math.round(this.currentAd.duration),
       }, this.adType());
       this.comScoreState = ComScoreState.Advertisement;
-      this.logger.log('ComScoreStreamingAnalytics transitioned to Ad');
-
+      ComScoreLogger.log('ComScoreStreamingAnalytics transitioned to Ad');
     }
   }
 
@@ -163,7 +170,7 @@ export class ComScoreStreamingAnalytics {
       let rawData = this.rawData(this.player.getDuration());
       this.streamingAnalytics.playVideoContentPart(rawData, this.contentType());
       this.comScoreState = ComScoreState.Video;
-      this.logger.log('ComScoreStreamingAnalytics transitioned to Video - ' + JSON.stringify(rawData));
+      ComScoreLogger.log('ComScoreStreamingAnalytics transitioned to Video - ' + JSON.stringify(rawData));
     }
   }
 
@@ -198,13 +205,13 @@ export class ComScoreStreamingAnalytics {
       ns_st_ddt: this.metadata.digitalAirdate,
       ns_st_tdt: this.metadata.tvAirdate,
       ns_st_st: this.metadata.stationTitle,
-      c3: this.metadata.uniqueContentId,
-      c4: this.metadata.uniqueContentId,
-      c6: this.metadata.uniqueContentId,
+      c3: this.metadata.c3,
+      c4: this.metadata.c4,
+      c6: this.metadata.c6,
       ns_st_ft: this.metadata.feedType,
       ns_st_ce: this.metadata.completeEpisode ? '1' : null,
       ns_st_ia: this.metadata.advertisementLoad ? '1' : null,
-      ns_st_cl: assetLength * 1000,
+      ns_st_cl: Math.round(assetLength * 1000),
     };
 
     return data;
