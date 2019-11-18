@@ -1,4 +1,4 @@
-import { ComScoreMediaType, ComScoreMetadata, ComScoreStreamingAnalytics } from './ComScoreStreamingAnalytics';
+import { ComScoreMetadata, ComScoreStreamingAnalytics } from './ComScoreStreamingAnalytics';
 import { PlayerAPI } from 'bitmovin-player';
 import { ComScoreLogger } from './ComScoreLogger';
 
@@ -12,9 +12,14 @@ export class ComScoreAnalytics {
    * @param configuration - Configuration object for your ComScore specific identifiers
    */
   public static start(configuration: ComScoreConfiguration) {
-    this.logger = new ComScoreLogger(configuration);
 
-    if (configuration == null) {
+    if (configuration) {
+      if (configuration.debug) {
+        ComScoreLogger.enable();
+      } else {
+        ComScoreLogger.disable();
+      }
+    } else {
       console.error('ComScoreConfiguration must not be null');
       return;
     }
@@ -23,7 +28,7 @@ export class ComScoreAnalytics {
 
     if (configuration.isOTT === true) {
       if (typeof ns_.comScore === 'undefined') {
-        console.error('ComScore script missing, cannot init ComScoreAnalytics. '
+        ComScoreLogger.error('ComScore script missing, cannot init ComScoreAnalytics. '
           + 'Please load the ComScore script (comscore.ott.1.5.0.170216.min.js) before Bitmovin\'s ComScore integration.');
         return;
       }
@@ -39,7 +44,7 @@ export class ComScoreAnalytics {
     }
 
     ComScoreAnalytics.started = true;
-    this.logger.log('ComScoreAnalytics Started');
+    ComScoreLogger.log('ComScoreAnalytics Started');
   }
 
   public static isActive(): boolean {
@@ -52,12 +57,12 @@ export class ComScoreAnalytics {
    * @param metadata - ComScoreMetadata for the source that will be loaded in the player
    */
   public static createComScoreStreamingAnalytics(player: PlayerAPI,
-                                                 metadata: ComScoreMetadata = { mediaType: ComScoreMediaType.Other }): ComScoreStreamingAnalytics {
+                                                 metadata: ComScoreMetadata = new ComScoreMetadata()): ComScoreStreamingAnalytics {
     if (!ComScoreAnalytics.started) {
-      console.error('ComScoreConfiguration must be started before you call createComScoreStreamingAnalytics');
+      ComScoreLogger.error('ComScoreConfiguration must be started before you call createComScoreStreamingAnalytics');
       return;
     }
-    this.logger.log('Creating ComScoreStreamingAnalytics');
+    ComScoreLogger.log('Creating ComScoreStreamingAnalytics');
     return new ComScoreStreamingAnalytics(player, metadata, this.configuration);
   }
 
@@ -66,7 +71,7 @@ export class ComScoreAnalytics {
    */
   public static enterForeground() {
     if (this.configuration.isOTT) {
-      this.logger.log('ComScoreAnalytics enterForeground');
+      ComScoreLogger.log('ComScoreAnalytics enterForeground');
       ns_.comScore.onEnterForeground();
     }
   }
@@ -76,7 +81,7 @@ export class ComScoreAnalytics {
    */
   public static exitForeground() {
     if (this.configuration.isOTT) {
-      this.logger.log('ComScoreAnalytics exitForeground');
+      ComScoreLogger.log('ComScoreAnalytics exitForeground');
       ns_.comScore.onExitForeground();
     }
   }
@@ -86,7 +91,7 @@ export class ComScoreAnalytics {
    */
   public static close() {
     if (this.configuration.isOTT) {
-      this.logger.log('ComScoreAnalytics close');
+      ComScoreLogger.log('ComScoreAnalytics close');
       ns_.comScore.close();
     }
   }
