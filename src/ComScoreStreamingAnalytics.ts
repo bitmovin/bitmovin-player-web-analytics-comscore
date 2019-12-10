@@ -1,5 +1,5 @@
 import { AdBreakEvent, AdEvent, LinearAd, PlaybackEvent, PlayerAPI, PlayerEventBase } from 'bitmovin-player';
-import { ComScoreConfiguration } from './ComScoreAnalytics';
+import { ComScoreConfiguration, ComScoreUserConsent } from './ComScoreAnalytics';
 import { ComScoreLogger } from './ComScoreLogger';
 
 // Public
@@ -12,6 +12,7 @@ export class ComScoreStreamingAnalytics {
   private metadata: ComScoreMetadata;
   private adBreakScheduleTime?: number;
   private logger: ComScoreLogger;
+  private userConsent: ComScoreUserConsent = ComScoreUserConsent.Unknown;
 
   constructor(player: PlayerAPI, metadata: ComScoreMetadata = new ComScoreMetadata(),
               configuration: ComScoreConfiguration) {
@@ -31,6 +32,10 @@ export class ComScoreStreamingAnalytics {
     if (!metadata) {
       ComScoreLogger.error('ComScoreMetadata must not be null');
       return;
+    }
+
+    if (configuration.userConsent !== undefined) {
+      this.userConsent = configuration.userConsent;
     }
 
     // Defaults
@@ -54,9 +59,22 @@ export class ComScoreStreamingAnalytics {
    * another
    * @param metadata
    */
-
   updateMetadata(metadata: ComScoreMetadata): void {
     this.metadata = metadata;
+  }
+
+  /**
+   * sets the userContent to granted. Use after the ComScoreAnalytics object has been started
+   */
+  public userConsentGranted() {
+    this.userConsent = ComScoreUserConsent.Granted;
+  }
+
+  /**
+   * sets the userContent to denied. Use after the ComScoreAnalytics object has been started
+   */
+  public userConsentDenied() {
+    this.userConsent = ComScoreUserConsent.Denied;
   }
 
   destroy(): void {
@@ -74,6 +92,7 @@ export class ComScoreStreamingAnalytics {
     this.metadata = null;
     this.player = null;
     this.streamingAnalytics = null;
+    this.userConsent = ComScoreUserConsent.Unknown;
   }
 
   private registerPlayerEvents(): void {
@@ -154,9 +173,9 @@ export class ComScoreStreamingAnalytics {
   private transitionToAd(): void {
     if (this.comScoreState !== ComScoreState.Advertisement) {
       this.stopComScoreTracking();
-      this.streamingAnalytics.playVideoAdvertisement({
-        ns_st_cl: Math.round(this.currentAd.duration),
-      }, this.adType());
+      const metadata: any = { ns_st_cl: Math.round(this.currentAd.duration)};
+      this.decorateUserConsent(metadata);
+      this.streamingAnalytics.playVideoAdvertisement(metadata, this.adType());
       this.comScoreState = ComScoreState.Advertisement;
       ComScoreLogger.log('ComScoreStreamingAnalytics transitioned to Ad');
     }
@@ -190,7 +209,7 @@ export class ComScoreStreamingAnalytics {
 
   private rawData(assetLength: number): any {
 
-    var data = {
+    var data: any = {
       ns_st_ci: this.metadata.uniqueContentId,
       ns_st_pu: this.metadata.publisherBrandName,
       ns_st_pr: this.metadata.programTitle,
@@ -211,8 +230,21 @@ export class ComScoreStreamingAnalytics {
       ns_st_ia: this.metadata.advertisementLoad ? '1' : null,
       ns_st_cl: Math.round(assetLength * 1000),
     };
-
+    this.decorateUserConsent(data);
     return data;
+  }
+
+  private decorateUserConsent(metadata: any): void {
+    switch (this.userConsent) {
+      case ComScoreUserConsent.Denied: {
+        metadata.cs_ucfr = '0';
+        break;
+      }
+      case ComScoreUserConsent.Granted: {
+        metadata.cs_ucfr = '1';
+        break;
+      }
+    }
   }
 
   private contentType(): ns_.ReducedRequirementsStreamingAnalytics.ContentType {
