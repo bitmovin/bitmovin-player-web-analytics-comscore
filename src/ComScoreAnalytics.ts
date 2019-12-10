@@ -41,7 +41,7 @@ export class ComScoreAnalytics {
         ns_.comScore.setAppName(configuration.applicationName);
         ns_.comScore.setAppVersion(configuration.applicationVersion);
 
-        if (configuration.userConsent !== undefined) {
+        if (configuration.userConsent != null) {
           ns_.comScore.setLabels({ cs_ucfr: configuration.userConsent === ComScoreUserConsent.Granted ? '1' : '0'});
         }
       }
