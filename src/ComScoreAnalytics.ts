@@ -40,6 +40,10 @@ export class ComScoreAnalytics {
         ns_.comScore.setPublisherSecret(configuration.publisherSecret);
         ns_.comScore.setAppName(configuration.applicationName);
         ns_.comScore.setAppVersion(configuration.applicationVersion);
+
+        if (configuration.userConsent != null) {
+          ns_.comScore.setLabels({ cs_ucfr: configuration.userConsent});
+        }
       }
     }
 
@@ -64,6 +68,26 @@ export class ComScoreAnalytics {
     }
     ComScoreLogger.log('Creating ComScoreStreamingAnalytics');
     return new ComScoreStreamingAnalytics(player, metadata, this.configuration);
+  }
+
+  /**
+   * sets the userContent to granted. Use after the ComScoreAnalytics object has been started
+   */
+  public static userConsentGranted() {
+    if (ComScoreAnalytics.started) {
+      ns_.comScore.setLabels({ cs_ucfr: '1' });
+      ns_.comScore.hidden();
+    }
+  }
+
+  /**
+   * sets the userContent to denied. Use after the ComScoreAnalytics object has been started
+   */
+  public static userConsentDenied() {
+    if (ComScoreAnalytics.started) {
+      ns_.comScore.setLabels({ cs_ucfr: '0' });
+      ns_.comScore.hidden();
+    }
   }
 
   /**
@@ -124,8 +148,22 @@ export interface ComScoreConfiguration {
   isOTT: boolean;
 
   /**
+   * value indicating the user's consent for ComScore tracking. Used for CCPA compliance
+   */
+  userConsent?: ComScoreUserConsent;
+
+  /**
    * Toggles debug output for ComScoreAnalytics integration
    */
   debug: boolean;
 
+}
+
+/**
+ * enum indicating whether the user has consented to ComScore analytics being sent
+ */
+export enum ComScoreUserConsent {
+  Denied = '0',
+  Granted = '1',
+  Unknown = '-1',
 }
