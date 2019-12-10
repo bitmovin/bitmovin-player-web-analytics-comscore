@@ -74,16 +74,20 @@ export class ComScoreAnalytics {
    * sets the userContent to granted. Use after the ComScoreAnalytics object has been started
    */
   public static userConsentGranted() {
-    ns_.comScore.setLabels({ cs_ucfr: '1' });
-    ns_.comScore.hidden();
+    if (ComScoreAnalytics.started) {
+      ns_.comScore.setLabels({ cs_ucfr: '1' });
+      ns_.comScore.hidden();
+    }
   }
 
   /**
    * sets the userContent to denied. Use after the ComScoreAnalytics object has been started
    */
   public static userConsentDenied() {
-    ns_.comScore.setLabels({ cs_ucfr: '0' });
-    ns_.comScore.hidden();
+    if (ComScoreAnalytics.started) {
+      ns_.comScore.setLabels({ cs_ucfr: '0' });
+      ns_.comScore.hidden();
+    }
   }
 
   /**

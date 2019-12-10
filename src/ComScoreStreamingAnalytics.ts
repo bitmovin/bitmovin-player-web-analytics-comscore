@@ -174,7 +174,7 @@ export class ComScoreStreamingAnalytics {
     if (this.comScoreState !== ComScoreState.Advertisement) {
       this.stopComScoreTracking();
       const metadata: any = { ns_st_cl: Math.round(this.currentAd.duration)};
-      this.decorateUserContent(metadata);
+      this.decorateUserConsent(metadata);
       this.streamingAnalytics.playVideoAdvertisement(metadata, this.adType());
       this.comScoreState = ComScoreState.Advertisement;
       ComScoreLogger.log('ComScoreStreamingAnalytics transitioned to Ad');
@@ -230,11 +230,11 @@ export class ComScoreStreamingAnalytics {
       ns_st_ia: this.metadata.advertisementLoad ? '1' : null,
       ns_st_cl: Math.round(assetLength * 1000),
     };
-    this.decorateUserContent(data);
+    this.decorateUserConsent(data);
     return data;
   }
 
-  private decorateUserContent(metadata: any): void {
+  private decorateUserConsent(metadata: any): void {
     switch (this.userConsent) {
       case ComScoreUserConsent.Denied: {
         metadata.cs_ucfr = '0';
