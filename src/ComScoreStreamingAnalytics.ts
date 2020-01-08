@@ -14,6 +14,9 @@ export class ComScoreStreamingAnalytics {
   private metadata: ComScoreMetadata;
   private adBreakScheduleTime?: number;
   private logger: ComScoreLogger;
+  private configuration: ComScoreConfiguration;
+  private playerTransitioningState: PlayerTransitionState = PlayerTransitionState.Transitioned;
+  private isMobile: boolean;
 
   constructor(player: PlayerAPI, metadata: ComScoreMetadata = { mediaType: ComScoreMediaType.Other },
               configuration: ComScoreConfiguration) {
@@ -28,6 +31,7 @@ export class ComScoreStreamingAnalytics {
     }
 
     // Defaults
+    this.configuration = configuration;
     this.player = player;
     this.metadata = metadata;
     if (configuration.isOTT) {
@@ -39,7 +43,10 @@ export class ComScoreStreamingAnalytics {
 
     }
     this.registerPlayerEvents();
-
+    this.isMobile = !!navigator.userAgent && /Mobile/.test(navigator.userAgent);
+    if (this.isMobile) {
+      window.addEventListener('blur', this.blured);
+    }
     return this;
   }
 
@@ -65,6 +72,7 @@ export class ComScoreStreamingAnalytics {
     this.player.off(this.player.exports.PlayerEvent.StallStarted, this.stallStarted);
     this.player.off(this.player.exports.PlayerEvent.StallEnded, this.stallEnded);
     this.player.off(this.player.exports.PlayerEvent.AdBreakStarted, this.adBreakStarted);
+    this.player.off(this.player.exports.PlayerEvent.TimeChanged, this.timeChanged);
     this.metadata = null;
     this.player = null;
     this.streamingAnalytics = null;
@@ -82,10 +90,43 @@ export class ComScoreStreamingAnalytics {
     this.player.on(this.player.exports.PlayerEvent.StallStarted, this.stallStarted);
     this.player.on(this.player.exports.PlayerEvent.StallEnded, this.stallEnded);
     this.player.on(this.player.exports.PlayerEvent.AdBreakStarted, this.adBreakStarted);
+    this.player.on(this.player.exports.PlayerEvent.TimeChanged, this.timeChanged);
+  }
+
+  private blured = () => {
+    if (this.player.ads.isLinearAdActive()) {
+      this.stopComScoreTrackingBackgroundAd();
+      console.log('BLURED');
+    }
+  }
+
+  private timeChanged = (event: PlaybackEvent) => {
+    if ( ( this.playerTransitioningState === PlayerTransitionState.TransitioningToVideo ) && ( this.comScoreState !== ComScoreState.Video ) ) {
+      let rawData = this.rawData(this.player.getDuration());
+      this.streamingAnalytics.playVideoContentPart(rawData, this.contentType());
+      this.comScoreState = ComScoreState.Video;
+      this.logger.log('ComScoreStreamingAnalytics transitioned to Video - ' + JSON.stringify(rawData));
+      this.playerTransitioningState = PlayerTransitionState.Transitioned;
+    }
+    if ( ( this.playerTransitioningState === PlayerTransitionState.TransitioningToAd ) && (this.comScoreState !== ComScoreState.Advertisement) ) {
+      this.streamingAnalytics.playVideoAdvertisement({
+        ns_st_cl: this.currentAd.duration * 1000,
+        ns_st_ci: this.currentAd.id,
+        ns_st_st: '*null',
+        ns_st_ia: '*null',
+        ns_st_ddt: '*null',
+        ns_st_tdt: '*null',
+      }, this.adType());
+      this.comScoreState = ComScoreState.Advertisement;
+      this.logger.log('ComScoreStreamingAnalytics transitioned to Ad');
+      this.playerTransitioningState = PlayerTransitionState.Transitioned;
+    }
   }
 
   private paused = (event: PlaybackEvent) => {
-    this.stopComScoreTracking();
+    if (! this.player.ads.isLinearAdActive()) {
+      this.stopComScoreTracking();
+    }
   }
 
   private unloaded = (event: PlaybackEvent) => {
@@ -127,6 +168,8 @@ export class ComScoreStreamingAnalytics {
 
   private playbackFinished = (event: PlayerEventBase) => {
     this.stopComScoreTracking();
+    this.streamingAnalytics = null;
+    new ComScoreStreamingAnalytics(this.player, this.metadata, this.configuration);
   }
 
   private stallStarted = (event: PlayerEventBase) => {
@@ -135,6 +178,14 @@ export class ComScoreStreamingAnalytics {
 
   private stallEnded = (event: PlayerEventBase) => {
     this.transitionToVideo();
+  }
+
+  private stopComScoreTrackingBackgroundAd(): void {
+    console.log(' DEBUG ComScoreStreamingAnalytics stopped active background Ad');
+    if (this.comScoreState !== ComScoreState.Stopped) {
+      this.streamingAnalytics.stop();
+      this.logger.log('ComScoreStreamingAnalytics stopped active background Ad');
+    }
   }
 
   private stopComScoreTracking(): void {
@@ -148,22 +199,14 @@ export class ComScoreStreamingAnalytics {
   private transitionToAd(): void {
     if (this.comScoreState !== ComScoreState.Advertisement) {
       this.stopComScoreTracking();
-      this.streamingAnalytics.playVideoAdvertisement({
-        ns_st_cl: this.currentAd.duration,
-      }, this.adType());
-      this.comScoreState = ComScoreState.Advertisement;
-      this.logger.log('ComScoreStreamingAnalytics transitioned to Ad');
-
+      this.playerTransitioningState = PlayerTransitionState.TransitioningToAd;
     }
   }
 
   private transitionToVideo(): void {
     if (this.comScoreState !== ComScoreState.Video) {
       this.stopComScoreTracking();
-      let rawData = this.rawData(this.player.getDuration());
-      this.streamingAnalytics.playVideoContentPart(rawData, this.contentType());
-      this.comScoreState = ComScoreState.Video;
-      this.logger.log('ComScoreStreamingAnalytics transitioned to Video - ' + JSON.stringify(rawData));
+      this.playerTransitioningState = PlayerTransitionState.TransitioningToVideo;
     }
   }
 
@@ -195,15 +238,15 @@ export class ComScoreStreamingAnalytics {
       ns_st_sn: this.metadata.episodeSeasonNumber,
       ns_st_en: this.metadata.episodeNumber,
       ns_st_ge: this.metadata.contentGenre,
-      ns_st_ddt: this.metadata.digitalAirdate,
-      ns_st_tdt: this.metadata.tvAirdate,
-      ns_st_st: this.metadata.stationTitle,
+      ns_st_ddt: this.metadata.digitalAirdate ? this.metadata.digitalAirdate : '*null',
+      ns_st_tdt: this.metadata.tvAirdate ? this.metadata.tvAirdate : '*null',
+      ns_st_st: this.metadata.stationTitle ? this.metadata.stationTitle : '*null',
       c3: this.metadata.uniqueContentId,
       c4: this.metadata.uniqueContentId,
       c6: this.metadata.uniqueContentId,
       ns_st_ft: this.metadata.feedType,
-      ns_st_ce: this.metadata.completeEpisode ? '1' : null,
-      ns_st_ia: this.metadata.advertisementLoad ? '1' : null,
+      ns_st_ce: this.metadata.completeEpisode ? this.metadata.completeEpisode : '*null',
+      ns_st_ia: this.metadata.advertisementLoad ? this.metadata.advertisementLoad : '*null',
       ns_st_cl: assetLength * 1000,
     };
 
@@ -236,6 +279,12 @@ enum ComScoreState {
   Stopped,
   Video,
   Advertisement,
+}
+
+enum PlayerTransitionState {
+  TransitioningToAd,
+  TransitioningToVideo,
+  Transitioned,
 }
 
 export class ComScoreMetadata {

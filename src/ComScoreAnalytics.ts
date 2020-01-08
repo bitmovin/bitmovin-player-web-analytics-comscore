@@ -6,6 +6,7 @@ export class ComScoreAnalytics {
   private static started: boolean = false;
   private static configuration: ComScoreConfiguration;
   private static logger: ComScoreLogger;
+  public configuration: ComScoreConfiguration;
 
   /**
    * Starts ComScore app tracking
@@ -13,7 +14,8 @@ export class ComScoreAnalytics {
    */
   public static start(configuration: ComScoreConfiguration) {
     this.logger = new ComScoreLogger(configuration);
-
+    this.configuration = configuration;
+    configuration = configuration;
     if (configuration == null) {
       console.error('ComScoreConfiguration must not be null');
       return;

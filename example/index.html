@@ -91,14 +91,14 @@
   };
 
   var player = new bitmovin.player.Player(container, playerConf);
-
+  
   player.load(source).then(function() {
     console.log('Successfully created Bitmovin Player instance');
   }, function(reason) {
     console.error('Error while creating Bitmovin Player instance');
     console.error(reason);
   });
-
+  
   bitmovin.player.analytics.ComScoreAnalytics.start({
     publisherId: 'YOUR_PUBLISHER_ID',
     publisherSecret: 'YOUR_PUBLISHER_SECRET',
@@ -111,7 +111,7 @@
   bitmovin.player.analytics.ComScoreAnalytics.enterForeground();
 
   var comscoreStreamingAnalytics = bitmovin.player.analytics.ComScoreAnalytics.createComScoreStreamingAnalytics(player, {
-      mediaType: bitmovin.player.analytics.ComScoreMediaType.LongFormOnDemand,
+      mediaType: bitmovin.player.analytics.ComScoreMediaType.ShortFormOnDemand,
       publisherBrandName: 'ABC',
       programTitle: 'Modern Family',
       episodeTitle: 'Rash Decisions',
@@ -120,6 +120,7 @@
       contentGenre: 'Comedy',
       stationTitle: 'Hulu',
       completeEpisode: true,
+      uniqueContentId: 'YOUR UNIQUE CONTENT ID'
     },
   );
 
