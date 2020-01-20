@@ -208,6 +208,10 @@ export class ComScoreStreamingAnalytics {
   }
 
   private rawData(assetLength: number): any {
+    let contentLength = Math.round(assetLength * 1000);
+    if (contentLength === Infinity) {
+      contentLength = 0;
+    }
 
     var data: any = {
       ns_st_ci: this.metadata.uniqueContentId,
@@ -228,7 +232,7 @@ export class ComScoreStreamingAnalytics {
       ns_st_ft: this.metadata.feedType,
       ns_st_ce: this.metadata.completeEpisode ? '1' : null,
       ns_st_ia: this.metadata.advertisementLoad ? '1' : null,
-      ns_st_cl: Math.round(assetLength * 1000),
+      ns_st_cl: contentLength,
     };
     this.decorateUserConsent(data);
     return data;
