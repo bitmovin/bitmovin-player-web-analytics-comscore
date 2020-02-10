@@ -1,6 +1,7 @@
 import { AdBreakEvent, AdEvent, LinearAd, PlaybackEvent, PlayerAPI, PlayerEventBase } from 'bitmovin-player';
 import { ComScoreConfiguration, ComScoreUserConsent } from './ComScoreAnalytics';
 import { ComScoreLogger } from './ComScoreLogger';
+import stringify from 'fast-safe-stringify';
 
 // Public
 
@@ -187,7 +188,7 @@ export class ComScoreStreamingAnalytics {
       let rawData = this.rawData(this.player.getDuration());
       this.streamingAnalytics.playVideoContentPart(rawData, this.contentType());
       this.comScoreState = ComScoreState.Video;
-      ComScoreLogger.log('ComScoreStreamingAnalytics transitioned to Video - ' + JSON.stringify(rawData));
+      ComScoreLogger.log('ComScoreStreamingAnalytics transitioned to Video - ' + stringify(rawData));
     }
   }
 
