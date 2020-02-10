@@ -105,6 +105,7 @@ export class ComScoreStreamingAnalytics {
     this.player.on(this.player.exports.PlayerEvent.AdFinished, this.adFinished);
     this.player.on(this.player.exports.PlayerEvent.AdSkipped, this.adSkipped);
     this.player.on(this.player.exports.PlayerEvent.AdError, this.adError);
+    this.player.on(this.player.exports.PlayerEvent.AdBreakFinished, this.adBreakFinished);
     this.player.on(this.player.exports.PlayerEvent.StallStarted, this.stallStarted);
     this.player.on(this.player.exports.PlayerEvent.StallEnded, this.stallEnded);
     this.player.on(this.player.exports.PlayerEvent.AdBreakStarted, this.adBreakStarted);
@@ -148,6 +149,10 @@ export class ComScoreStreamingAnalytics {
   }
 
   private adFinished = (event: AdEvent) => {
+    this.stopComScoreTracking();
+  }
+
+  private adBreakFinished = (event: AdEvent) => {
     this.transitionToVideo();
   }
 
