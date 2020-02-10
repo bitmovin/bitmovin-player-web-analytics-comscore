@@ -174,7 +174,7 @@ export class ComScoreStreamingAnalytics {
   private transitionToAd(): void {
     if (this.comScoreState !== ComScoreState.Advertisement) {
       this.stopComScoreTracking();
-      const metadata: any = { ns_st_cl: Math.round(this.currentAd.duration)};
+      const metadata: any = { ns_st_cl: Math.round(this.currentAd.duration * 1000)};
       this.decorateUserConsent(metadata);
       this.streamingAnalytics.playVideoAdvertisement(metadata, this.adType());
       this.comScoreState = ComScoreState.Advertisement;
