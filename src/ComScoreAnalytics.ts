@@ -71,6 +71,26 @@ export class ComScoreAnalytics {
   }
 
   /**
+   * Sets a Comscore application level label
+   */
+  public static setLabel(label: string, value: any) {
+    if (ComScoreAnalytics.started) {
+      ns_.comScore.setLabel(label, value);
+      ns_.comScore.hidden();
+    }
+  }
+
+  /**
+   * Sets  Comscore application level labels
+   */
+  public static setLabels(labels: any) {
+    if (ComScoreAnalytics.started) {
+      ns_.comScore.setLabels(labels);
+      ns_.comScore.hidden();
+    }
+  }
+
+  /**
    * sets the userContent to granted. Use after the ComScoreAnalytics object has been started
    */
   public static userConsentGranted() {
