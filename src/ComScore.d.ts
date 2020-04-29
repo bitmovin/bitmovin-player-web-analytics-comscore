@@ -21,6 +21,8 @@ declare namespace ns_ {
 
     function setAppVersion(appVersion: string): void;
 
+    function setLabel(label: any, value: any): void;
+
     function setLabels(labels: any): void;
 
     function hidden(): void;
