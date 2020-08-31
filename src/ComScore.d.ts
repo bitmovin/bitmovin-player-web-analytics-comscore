@@ -1,15 +1,4 @@
 declare namespace ns_ {
-  class ReducedRequirementsStreamingAnalytics {
-    playVideoContentPart(metadata: any, contentType: any);
-
-    playVideoAdvertisement(metadata: any, contentType: any);
-
-    stop(): void;
-
-    constructor();
-    constructor(configuration: any);
-  }
-
   namespace analytics {
     namespace configuration {
       function setApplicationName(name: string): void;
@@ -26,7 +15,7 @@ declare namespace ns_ {
 
       class PublisherConfiguration {
         publisherId: string;
-        constructor({}: any)
+        constructor({ }: any)
       }
     }
 
@@ -53,31 +42,61 @@ declare namespace ns_ {
     enum PlatformAPIs {
       html5,
     }
-  }
 
-  namespace ReducedRequirementsStreamingAnalytics {
-    export enum AdType {
-      LinearOnDemandPreRoll,
-      LinearOnDemandMidRoll,
-      LinearOnDemandPostRoll,
-      LinearLive,
-      BrandedOnDemandPreRoll,
-      BrandedOnDemandMidRoll,
-      BrandedOnDemandPostRoll,
-      BrandedOnDemandContent,
-      BrandedOnDemandLive,
-      Other,
+    class StreamingAnalytics {
+      notifyPlay(): void;
+
+      setMetadata(metadata: any): void;
+
+      stop(): void;
+
+      constructor();
     }
 
-    export enum ContentType {
-      LongFormOnDemand,
-      ShortFormOnDemand,
-      Live,
-      UserGeneratedLongFormOnDemand,
-      UserGeneratedShortFormOnDemand,
-      UserGeneratedLive,
-      Bumper,
-      Other,
+    namespace StreamingAnalytics {
+      namespace ContentMetadata {
+        export enum ContentType {
+          LongFormOnDemand,
+          ShortFormOnDemand,
+          Live,
+          UserGeneratedLongFormOnDemand,
+          UserGeneratedShortFormOnDemand,
+          UserGeneratedLive,
+          Bumper,
+          Other,
+        }
+      }
+
+      class ContentMetadata {
+        setMediaType(type: StreamingAnalytics.ContentMetadata.ContentType): void;
+
+        addCustomLabels(labels: any): void;
+
+        constructor();
+      }
+
+      namespace AdvertisementMetadata {
+        export enum AdvertisementType {
+          LinearOnDemandPreRoll,
+          LinearOnDemandMidRoll,
+          LinearOnDemandPostRoll,
+          LinearLive,
+          BrandedOnDemandPreRoll,
+          BrandedOnDemandMidRoll,
+          BrandedOnDemandPostRoll,
+          BrandedOnDemandContent,
+          BrandedOnDemandLive,
+          Other,
+        }
+      }
+
+      class AdvertisementMetadata {
+        setMediaType(type: StreamingAnalytics.AdvertisementMetadata.AdvertisementType): void;
+
+        addCustomLabels(labels: any): void;
+
+        constructor();
+      }
     }
   }
 }
