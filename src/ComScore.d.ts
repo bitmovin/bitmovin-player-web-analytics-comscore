@@ -10,30 +10,49 @@ declare namespace ns_ {
     constructor(configuration: any);
   }
 
-  namespace comScore {
+  namespace analytics {
+    namespace configuration {
+      function setApplicationName(name: string): void;
+
+      function setApplicationVersion(name: string): void;
+
+      function addClient(config: PublisherConfiguration): void;
+
+      function setPersistentLabel(name: string, value: any): void;
+
+      function setPersistentLabels(labels: any);
+
+      function enableImplementationValidationMode(): void;
+
+      class PublisherConfiguration {
+        publisherId: string;
+        constructor({}: any)
+      }
+    }
+
     function setPlatformAPI(platform: PlatformAPIs): void;
 
     function setCustomerC2(publisherId: string): void;
 
     function setPublisherSecret(publisherSecret: string): void;
 
-    function setAppName(appName: string): void;
+    function notifyHiddenEvent(): void;
 
-    function setAppVersion(appVersion: string): void;
+    function notifyEnterForeground(): void;
 
-    function setLabel(label: string, value: any): void;
-
-    function setLabels(labels: any): void;
-
-    function hidden(): void;
-
-    function setAppContext(context: any): void;
-
-    function onEnterForeground(): void;
-
-    function onExitForeground(): void;
+    function notifyExitForeground(): void;
 
     function close(): void;
+
+    function start(): void;
+
+    namespace PlatformApi {
+      function setPlatformAPI(platformApi: PlatformAPIs): void;
+    }
+
+    enum PlatformAPIs {
+      html5,
+    }
   }
 
   namespace ReducedRequirementsStreamingAnalytics {
@@ -60,12 +79,6 @@ declare namespace ns_ {
       Bumper,
       Other,
     }
-  }
-
-  /* tslint:enable */
-
-  enum PlatformAPIs {
-    html5,
   }
 }
 
