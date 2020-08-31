@@ -48,7 +48,7 @@ declare namespace ns_ {
 
       setMetadata(metadata: any): void;
 
-      stop(): void;
+      notifyPause(): void;
 
       constructor();
     }

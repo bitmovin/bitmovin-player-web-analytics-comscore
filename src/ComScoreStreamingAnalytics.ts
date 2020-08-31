@@ -165,7 +165,7 @@ export class ComScoreStreamingAnalytics {
 
   private stopComScoreTracking(): void {
     if (this.comScoreState !== ComScoreState.Stopped) {
-      this.streamingAnalytics.stop();
+      this.streamingAnalytics.notifyPause();
       this.comScoreState = ComScoreState.Stopped;
       ComScoreLogger.log('ComScoreStreamingAnalytics stopped');
     }
@@ -192,7 +192,7 @@ export class ComScoreStreamingAnalytics {
   private transitionToVideo(): void {
     if (this.comScoreState !== ComScoreState.Video) {
       this.stopComScoreTracking();
-      
+
       let rawData = this.rawData(this.player.getDuration());
 
       var cm = new this.analytics.StreamingAnalytics.ContentMetadata();
