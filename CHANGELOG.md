@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Develop
+## Changed
+- Upgrade Comscore SDK support to version `7.5.0.200713`, per guidelines from migration document. 
+
 ## [1.1.4]
 ### Added
 - Expose `setLabel()` and `setLabels()` methods on `ComScoreAnalytics`.
