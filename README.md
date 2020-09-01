@@ -8,10 +8,11 @@ Bitmovin Video Player with the ComScore Analytics integration
 Via npm package:
 `npm install --save bitmovin-player-analytics-comscore`
 
-or add `bitmovinplayer-analytics-comscore.js` directly
+or add `bitmovinplayer-analytics-comscore.js` directly.
 
 ```html
-// Include a comScore SDK from your comScore dashboard before the bitmovin plugin
+// Include a ComScore SDK from your ComScore dashboard before the Bitmovin plugin. The current version of this integration supports Comscore SDK version `7.5.0.200713`. Generally this file is called comscore.js.
+<script src='comscore.js'></script>
 
 // Bitmovin CDN version
 <script src="//bitmovin-a.akamaihd.net/bitmovin-analytics-comscore/stable/comscore-plugin.min.js"></script>
@@ -19,7 +20,6 @@ or add `bitmovinplayer-analytics-comscore.js` directly
 // or your own local copy
 <script src="/local/path/comscore-plugin.min.js"></script>
 ```
-
 
 ## Usage
 
@@ -29,7 +29,6 @@ or add `bitmovinplayer-analytics-comscore.js` directly
   // Start ComScoreAnalytics app tracking
   bitmovin.player.analytics.ComScoreAnalytics.start({
     publisherId: 'YOUR_PUBLISHER_ID',
-    publisherSecret: 'YOUR_PUBLISHER_SECRET',
     applicationName: 'YOUR_APPLICATION_NAME',
     applicationVersion: 'YOUR_APPLICATION_VERSION',
   });
