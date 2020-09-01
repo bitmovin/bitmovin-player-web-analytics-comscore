@@ -49,7 +49,6 @@ export class ComScoreAnalytics {
       }
     }
 
-    this.analytics.configuration.enableImplementationValidationMode();
     this.analytics.start();
     ComScoreAnalytics.started = true;
     ComScoreLogger.log('ComScoreAnalytics Started');
