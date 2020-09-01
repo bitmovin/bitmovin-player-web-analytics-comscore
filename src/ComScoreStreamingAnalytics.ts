@@ -7,7 +7,8 @@ import stringify from 'fast-safe-stringify';
 
 export class ComScoreStreamingAnalytics {
   private player: PlayerAPI;
-  private streamingAnalytics: ns_.ReducedRequirementsStreamingAnalytics;
+  private streamingAnalytics: ns_.analytics.StreamingAnalytics;
+  private analytics = ns_.analytics;
   private comScoreState: ComScoreState = ComScoreState.Stopped;
   private currentAd?: LinearAd;
   private metadata: ComScoreMetadata;
@@ -42,14 +43,8 @@ export class ComScoreStreamingAnalytics {
     // Defaults
     this.player = player;
     this.metadata = metadata;
-    if (configuration.isOTT) {
-      this.streamingAnalytics = new ns_.ReducedRequirementsStreamingAnalytics();
-    } else {
-      this.streamingAnalytics = new ns_.ReducedRequirementsStreamingAnalytics({
-        publisherId: configuration.publisherId,
-      });
 
-    }
+    this.streamingAnalytics = new this.analytics.StreamingAnalytics();
     this.registerPlayerEvents();
 
     return this;
@@ -170,7 +165,7 @@ export class ComScoreStreamingAnalytics {
 
   private stopComScoreTracking(): void {
     if (this.comScoreState !== ComScoreState.Stopped) {
-      this.streamingAnalytics.stop();
+      this.streamingAnalytics.notifyPause();
       this.comScoreState = ComScoreState.Stopped;
       ComScoreLogger.log('ComScoreStreamingAnalytics stopped');
     }
@@ -181,7 +176,14 @@ export class ComScoreStreamingAnalytics {
       this.stopComScoreTracking();
       const metadata: any = { ns_st_cl: Math.round(this.currentAd.duration * 1000)};
       this.decorateUserConsent(metadata);
-      this.streamingAnalytics.playVideoAdvertisement(metadata, this.adType());
+
+      var am = new this.analytics.StreamingAnalytics.AdvertisementMetadata();
+      am.setMediaType(this.adType());
+      am.addCustomLabels(metadata);
+
+      this.streamingAnalytics.setMetadata(am);
+      this.streamingAnalytics.notifyPlay();
+
       this.comScoreState = ComScoreState.Advertisement;
       ComScoreLogger.log('ComScoreStreamingAnalytics transitioned to Ad');
     }
@@ -190,24 +192,32 @@ export class ComScoreStreamingAnalytics {
   private transitionToVideo(): void {
     if (this.comScoreState !== ComScoreState.Video) {
       this.stopComScoreTracking();
+
       let rawData = this.rawData(this.player.getDuration());
-      this.streamingAnalytics.playVideoContentPart(rawData, this.contentType());
+
+      var cm = new this.analytics.StreamingAnalytics.ContentMetadata();
+      cm.setMediaType(this.contentType());
+      cm.addCustomLabels(rawData);
+
+      this.streamingAnalytics.setMetadata(cm);
+      this.streamingAnalytics.notifyPlay();
+
       this.comScoreState = ComScoreState.Video;
       ComScoreLogger.log('ComScoreStreamingAnalytics transitioned to Video - ' + stringify(rawData));
     }
   }
 
-  private adType(): ns_.ReducedRequirementsStreamingAnalytics.AdType {
+  private adType(): ns_.analytics.StreamingAnalytics.AdvertisementMetadata.AdvertisementType {
     if (this.player.isLive()) {
-      return ns_.ReducedRequirementsStreamingAnalytics.AdType.LinearLive;
+      return ns_.analytics.StreamingAnalytics.AdvertisementMetadata.AdvertisementType.LinearLive;
     } else {
       if (this.currentAd) {
         if (this.adBreakScheduleTime === 0) {
-          return ns_.ReducedRequirementsStreamingAnalytics.AdType.LinearOnDemandPreRoll;
+          return ns_.analytics.StreamingAnalytics.AdvertisementMetadata.AdvertisementType.LinearOnDemandPreRoll;
         } else if (this.adBreakScheduleTime === this.player.getDuration()) {
-          return ns_.ReducedRequirementsStreamingAnalytics.AdType.LinearOnDemandPostRoll;
+          return ns_.analytics.StreamingAnalytics.AdvertisementMetadata.AdvertisementType.LinearOnDemandPostRoll;
         } else {
-          return ns_.ReducedRequirementsStreamingAnalytics.AdType.LinearOnDemandMidRoll;
+          return ns_.analytics.StreamingAnalytics.AdvertisementMetadata.AdvertisementType.LinearOnDemandMidRoll;
         }
       }
     }
@@ -257,24 +267,24 @@ export class ComScoreStreamingAnalytics {
     }
   }
 
-  private contentType(): ns_.ReducedRequirementsStreamingAnalytics.ContentType {
+  private contentType(): ns_.analytics.StreamingAnalytics.ContentMetadata.ContentType {
     switch (this.metadata.mediaType) {
       case ComScoreMediaType.LongFormOnDemand:
-        return ns_.ReducedRequirementsStreamingAnalytics.ContentType.LongFormOnDemand;
+        return ns_.analytics.StreamingAnalytics.ContentMetadata.ContentType.LongFormOnDemand;
       case ComScoreMediaType.ShortFormOnDemand:
-        return ns_.ReducedRequirementsStreamingAnalytics.ContentType.ShortFormOnDemand;
+        return ns_.analytics.StreamingAnalytics.ContentMetadata.ContentType.ShortFormOnDemand;
       case ComScoreMediaType.Live:
-        return ns_.ReducedRequirementsStreamingAnalytics.ContentType.Live;
+        return ns_.analytics.StreamingAnalytics.ContentMetadata.ContentType.Live;
       case ComScoreMediaType.UserGeneratedLongFormOnDemand:
-        return ns_.ReducedRequirementsStreamingAnalytics.ContentType.UserGeneratedLongFormOnDemand;
+        return ns_.analytics.StreamingAnalytics.ContentMetadata.ContentType.UserGeneratedLongFormOnDemand;
       case ComScoreMediaType.UserGeneratedShortFormOnDemand:
-        return ns_.ReducedRequirementsStreamingAnalytics.ContentType.UserGeneratedShortFormOnDemand;
+        return ns_.analytics.StreamingAnalytics.ContentMetadata.ContentType.UserGeneratedShortFormOnDemand;
       case ComScoreMediaType.UserGeneratedLive:
-        return ns_.ReducedRequirementsStreamingAnalytics.ContentType.UserGeneratedLive;
+        return ns_.analytics.StreamingAnalytics.ContentMetadata.ContentType.UserGeneratedLive;
       case ComScoreMediaType.Bumper:
-        return ns_.ReducedRequirementsStreamingAnalytics.ContentType.Bumper;
+        return ns_.analytics.StreamingAnalytics.ContentMetadata.ContentType.Bumper;
       case ComScoreMediaType.Other:
-        return ns_.ReducedRequirementsStreamingAnalytics.ContentType.Other;
+        return ns_.analytics.StreamingAnalytics.ContentMetadata.ContentType.Other;
     }
   }
 }

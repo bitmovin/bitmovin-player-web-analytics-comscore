@@ -1,71 +1,103 @@
 declare namespace ns_ {
-  class ReducedRequirementsStreamingAnalytics {
-    playVideoContentPart(metadata: any, contentType: any);
+  namespace analytics {
+    namespace configuration {
+      function setApplicationName(name: string): void;
 
-    playVideoAdvertisement(metadata: any, contentType: any);
+      function setApplicationVersion(name: string): void;
 
-    stop(): void;
+      function addClient(config: PublisherConfiguration): void;
 
-    constructor();
-    constructor(configuration: any);
-  }
+      function setPersistentLabel(name: string, value: any): void;
 
-  namespace comScore {
+      function setPersistentLabels(labels: any);
+
+      function enableImplementationValidationMode(): void;
+
+      class PublisherConfiguration {
+        publisherId: string;
+        constructor({ }: any)
+      }
+    }
+
     function setPlatformAPI(platform: PlatformAPIs): void;
 
     function setCustomerC2(publisherId: string): void;
 
     function setPublisherSecret(publisherSecret: string): void;
 
-    function setAppName(appName: string): void;
+    function notifyHiddenEvent(): void;
 
-    function setAppVersion(appVersion: string): void;
+    function notifyEnterForeground(): void;
 
-    function setLabel(label: string, value: any): void;
-
-    function setLabels(labels: any): void;
-
-    function hidden(): void;
-
-    function setAppContext(context: any): void;
-
-    function onEnterForeground(): void;
-
-    function onExitForeground(): void;
+    function notifyExitForeground(): void;
 
     function close(): void;
-  }
 
-  namespace ReducedRequirementsStreamingAnalytics {
-    export enum AdType {
-      LinearOnDemandPreRoll,
-      LinearOnDemandMidRoll,
-      LinearOnDemandPostRoll,
-      LinearLive,
-      BrandedOnDemandPreRoll,
-      BrandedOnDemandMidRoll,
-      BrandedOnDemandPostRoll,
-      BrandedOnDemandContent,
-      BrandedOnDemandLive,
-      Other,
+    function start(): void;
+
+    namespace PlatformApi {
+      function setPlatformAPI(platformApi: PlatformAPIs): void;
     }
 
-    export enum ContentType {
-      LongFormOnDemand,
-      ShortFormOnDemand,
-      Live,
-      UserGeneratedLongFormOnDemand,
-      UserGeneratedShortFormOnDemand,
-      UserGeneratedLive,
-      Bumper,
-      Other,
+    enum PlatformAPIs {
+      html5,
     }
-  }
 
-  /* tslint:enable */
+    class StreamingAnalytics {
+      notifyPlay(): void;
 
-  enum PlatformAPIs {
-    html5,
+      setMetadata(metadata: any): void;
+
+      notifyPause(): void;
+
+      constructor();
+    }
+
+    namespace StreamingAnalytics {
+      namespace ContentMetadata {
+        export enum ContentType {
+          LongFormOnDemand,
+          ShortFormOnDemand,
+          Live,
+          UserGeneratedLongFormOnDemand,
+          UserGeneratedShortFormOnDemand,
+          UserGeneratedLive,
+          Bumper,
+          Other,
+        }
+      }
+
+      class ContentMetadata {
+        setMediaType(type: StreamingAnalytics.ContentMetadata.ContentType): void;
+
+        addCustomLabels(labels: any): void;
+
+        constructor();
+      }
+
+      namespace AdvertisementMetadata {
+        export enum AdvertisementType {
+          LinearOnDemandPreRoll,
+          LinearOnDemandMidRoll,
+          LinearOnDemandPostRoll,
+          LinearLive,
+          BrandedOnDemandPreRoll,
+          BrandedOnDemandMidRoll,
+          BrandedOnDemandPostRoll,
+          BrandedOnDemandContent,
+          BrandedOnDemandLive,
+          Other,
+        }
+      }
+
+      class AdvertisementMetadata {
+        setMediaType(type: StreamingAnalytics.AdvertisementMetadata.AdvertisementType): void;
+
+        addCustomLabels(labels: any): void;
+
+        constructor();
+      }
+    }
   }
 }
 
