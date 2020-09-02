@@ -88,7 +88,7 @@ export class ComScoreAnalytics {
    */
   public static setLabels(labels: any) {
     if (ComScoreAnalytics.started) {
-      this.analytics.configuration.setPersistentLabels(labels);
+      this.analytics.configuration.addPersistentLabels(labels);
       this.analytics.notifyHiddenEvent();
     }
   }
@@ -98,7 +98,7 @@ export class ComScoreAnalytics {
    */
   public static userConsentGranted() {
     if (ComScoreAnalytics.started) {
-      this.analytics.configuration.setPersistentLabel('cs_ucfr', '1' );
+      this.analytics.configuration.getPublisherConfiguration(this.configuration.publisherId).setPersistentLabel('cs_ucfr', '1' );
       this.analytics.notifyHiddenEvent();
     }
   }
@@ -108,7 +108,7 @@ export class ComScoreAnalytics {
    */
   public static userConsentDenied() {
     if (ComScoreAnalytics.started) {
-      this.analytics.configuration.setPersistentLabel('cs_ucfr', '0' );
+      this.analytics.configuration.getPublisherConfiguration(this.configuration.publisherId).setPersistentLabel('cs_ucfr', '0' );
       this.analytics.notifyHiddenEvent();
     }
   }
@@ -140,11 +140,6 @@ export interface ComScoreConfiguration {
    * PublisherId assigned by ComScore (also known as c2 value)
    */
   publisherId: string;
-
-  /**
-   * PublisherSecret assigned by ComScore
-   */
-  publisherSecret: string;
 
   /**
    * The name of your application that you want to be used for ComScore tracking

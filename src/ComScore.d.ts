@@ -7,9 +7,11 @@ declare namespace ns_ {
 
       function addClient(config: PublisherConfiguration): void;
 
+      function getPublisherConfiguration(id: string): any;
+
       function setPersistentLabel(name: string, value: any): void;
 
-      function setPersistentLabels(labels: any);
+      function addPersistentLabels(labels: any): void;
 
       function enableImplementationValidationMode(): void;
 
@@ -18,12 +20,6 @@ declare namespace ns_ {
         constructor({ }: any)
       }
     }
-
-    function setPlatformAPI(platform: PlatformAPIs): void;
-
-    function setCustomerC2(publisherId: string): void;
-
-    function setPublisherSecret(publisherSecret: string): void;
 
     function notifyHiddenEvent(): void;
 
