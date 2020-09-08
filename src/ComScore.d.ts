@@ -15,6 +15,8 @@ declare namespace ns_ {
 
       function enableImplementationValidationMode(): void;
 
+      function enableChildDirectedApplicationMode(): void;
+
       class PublisherConfiguration {
         publisherId: string;
         constructor({ }: any)
