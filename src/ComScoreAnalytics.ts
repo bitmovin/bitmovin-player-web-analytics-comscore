@@ -6,6 +6,7 @@ export class ComScoreAnalytics {
   private static started: boolean = false;
   private static configuration: ComScoreConfiguration;
   private static logger: ComScoreLogger;
+  private static analytics = ns_.analytics;
 
   /**
    * Starts ComScore app tracking
@@ -27,26 +28,32 @@ export class ComScoreAnalytics {
     ComScoreAnalytics.configuration = configuration;
 
     if (configuration.isOTT === true) {
-      if (typeof ns_.comScore === 'undefined') {
-        ComScoreLogger.error('ComScore script missing, cannot init ComScoreAnalytics. '
-          + 'Please load the ComScore script (comscore.ott.1.5.0.170216.min.js) before Bitmovin\'s ComScore integration.');
+      if (typeof ns_ === 'undefined' || typeof this.analytics === 'undefined') {
+        ComScoreLogger.error('ComScore script missing, cannot init ComScoreAnalytics');
         return;
       }
 
       if (!ComScoreAnalytics.started) {
-        ns_.comScore.setPlatformAPI(ns_.PlatformAPIs.html5);
-        ns_.comScore.setAppContext(this);
-        ns_.comScore.setCustomerC2(configuration.publisherId);
-        ns_.comScore.setPublisherSecret(configuration.publisherSecret);
-        ns_.comScore.setAppName(configuration.applicationName);
-        ns_.comScore.setAppVersion(configuration.applicationVersion);
+        this.analytics.PlatformApi.setPlatformAPI(this.analytics.PlatformAPIs.html5);
 
-        if (configuration.userConsent != null) {
-          ns_.comScore.setLabels({ cs_ucfr: configuration.userConsent});
-        }
+        let publisherConfig = new this.analytics.configuration.PublisherConfiguration({
+          'publisherId': configuration.publisherId,
+          'persistentLabels': {
+            'cs_ucfr': configuration.userConsent || '',
+          },
+        });
+        this.analytics.configuration.addClient(publisherConfig);
+
+        this.analytics.configuration.setApplicationName(configuration.applicationName);
+        this.analytics.configuration.setApplicationVersion(configuration.applicationVersion);
       }
     }
 
+    if (configuration.childDirectedAppMode) {
+      this.analytics.configuration.enableChildDirectedApplicationMode();
+    }
+
+    this.analytics.start();
     ComScoreAnalytics.started = true;
     ComScoreLogger.log('ComScoreAnalytics Started');
   }
@@ -75,8 +82,8 @@ export class ComScoreAnalytics {
    */
   public static setLabel(label: string, value: any) {
     if (ComScoreAnalytics.started) {
-      ns_.comScore.setLabel(label, value);
-      ns_.comScore.hidden();
+      this.analytics.configuration.setPersistentLabel(label, value);
+      this.analytics.notifyHiddenEvent();
     }
   }
 
@@ -85,8 +92,8 @@ export class ComScoreAnalytics {
    */
   public static setLabels(labels: any) {
     if (ComScoreAnalytics.started) {
-      ns_.comScore.setLabels(labels);
-      ns_.comScore.hidden();
+      this.analytics.configuration.addPersistentLabels(labels);
+      this.analytics.notifyHiddenEvent();
     }
   }
 
@@ -95,8 +102,8 @@ export class ComScoreAnalytics {
    */
   public static userConsentGranted() {
     if (ComScoreAnalytics.started) {
-      ns_.comScore.setLabels({ cs_ucfr: '1' });
-      ns_.comScore.hidden();
+      this.analytics.configuration.getPublisherConfiguration(this.configuration.publisherId).setPersistentLabel('cs_ucfr', '1' );
+      this.analytics.notifyHiddenEvent();
     }
   }
 
@@ -105,8 +112,8 @@ export class ComScoreAnalytics {
    */
   public static userConsentDenied() {
     if (ComScoreAnalytics.started) {
-      ns_.comScore.setLabels({ cs_ucfr: '0' });
-      ns_.comScore.hidden();
+      this.analytics.configuration.getPublisherConfiguration(this.configuration.publisherId).setPersistentLabel('cs_ucfr', '0' );
+      this.analytics.notifyHiddenEvent();
     }
   }
 
@@ -116,7 +123,7 @@ export class ComScoreAnalytics {
   public static enterForeground() {
     if (this.configuration.isOTT) {
       ComScoreLogger.log('ComScoreAnalytics enterForeground');
-      ns_.comScore.onEnterForeground();
+      this.analytics.notifyEnterForeground();
     }
   }
 
@@ -126,19 +133,10 @@ export class ComScoreAnalytics {
   public static exitForeground() {
     if (this.configuration.isOTT) {
       ComScoreLogger.log('ComScoreAnalytics exitForeground');
-      ns_.comScore.onExitForeground();
+      this.analytics.notifyExitForeground;
     }
   }
 
-  /**
-   * Call this method to close the current ComScoreTracking
-   */
-  public static close() {
-    if (this.configuration.isOTT) {
-      ComScoreLogger.log('ComScoreAnalytics close');
-      ns_.comScore.close();
-    }
-  }
 }
 
 export interface ComScoreConfiguration {
@@ -146,11 +144,6 @@ export interface ComScoreConfiguration {
    * PublisherId assigned by ComScore (also known as c2 value)
    */
   publisherId: string;
-
-  /**
-   * PublisherSecret assigned by ComScore
-   */
-  publisherSecret: string;
 
   /**
    * The name of your application that you want to be used for ComScore tracking
@@ -177,6 +170,11 @@ export interface ComScoreConfiguration {
    */
   debug: boolean;
 
+  /**
+   * Determines if the ChildDirectedApplicationMode setting should be enabled,
+   * which limits collection of advertising data.
+   */
+  childDirectedAppMode: boolean;
 }
 
 /**
