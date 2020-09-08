@@ -49,6 +49,10 @@ export class ComScoreAnalytics {
       }
     }
 
+    if (configuration.childDirectedAppMode) {
+      this.analytics.configuration.enableChildDirectedApplicationMode();
+    }
+
     this.analytics.start();
     ComScoreAnalytics.started = true;
     ComScoreLogger.log('ComScoreAnalytics Started');
@@ -166,6 +170,11 @@ export interface ComScoreConfiguration {
    */
   debug: boolean;
 
+  /**
+   * Determines if the ChildDirectedApplicationMode setting should be enabled,
+   * which limits collection of advertising data.
+   */
+  childDirectedAppMode: boolean;
 }
 
 /**
