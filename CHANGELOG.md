@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## Develop
 ## Changed
 - Upgrade Comscore SDK support to version `7.5.0.200713`, per guidelines from migration document. 
+## Added
+- `childDirectedAppMode` configuration option. 
 
 ## [1.1.4]
 ### Added
