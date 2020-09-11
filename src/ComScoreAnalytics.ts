@@ -27,26 +27,24 @@ export class ComScoreAnalytics {
 
     ComScoreAnalytics.configuration = configuration;
 
-    if (configuration.isOTT === true) {
-      if (typeof ns_ === 'undefined' || typeof this.analytics === 'undefined') {
-        ComScoreLogger.error('ComScore script missing, cannot init ComScoreAnalytics');
-        return;
-      }
+    if (typeof ns_ === 'undefined' || typeof this.analytics === 'undefined') {
+      ComScoreLogger.error('ComScore script missing, cannot init ComScoreAnalytics');
+      return;
+    }
 
-      if (!ComScoreAnalytics.started) {
-        this.analytics.PlatformApi.setPlatformAPI(this.analytics.PlatformAPIs.html5);
+    if (!ComScoreAnalytics.started) {
+      this.analytics.PlatformApi.setPlatformAPI(this.analytics.PlatformAPIs.html5);
 
-        let publisherConfig = new this.analytics.configuration.PublisherConfiguration({
-          'publisherId': configuration.publisherId,
-          'persistentLabels': {
-            'cs_ucfr': configuration.userConsent || '',
-          },
-        });
-        this.analytics.configuration.addClient(publisherConfig);
+      let publisherConfig = new this.analytics.configuration.PublisherConfiguration({
+        'publisherId': configuration.publisherId,
+        'persistentLabels': {
+          'cs_ucfr': configuration.userConsent || '',
+        },
+      });
+      this.analytics.configuration.addClient(publisherConfig);
 
-        this.analytics.configuration.setApplicationName(configuration.applicationName);
-        this.analytics.configuration.setApplicationVersion(configuration.applicationVersion);
-      }
+      this.analytics.configuration.setApplicationName(configuration.applicationName);
+      this.analytics.configuration.setApplicationVersion(configuration.applicationVersion);
     }
 
     if (configuration.childDirectedAppMode) {
@@ -68,7 +66,7 @@ export class ComScoreAnalytics {
    * @param metadata - ComScoreMetadata for the source that will be loaded in the player
    */
   public static createComScoreStreamingAnalytics(player: PlayerAPI,
-                                                 metadata: ComScoreMetadata = new ComScoreMetadata()): ComScoreStreamingAnalytics {
+    metadata: ComScoreMetadata = new ComScoreMetadata()): ComScoreStreamingAnalytics {
     if (!ComScoreAnalytics.started) {
       ComScoreLogger.error('ComScoreConfiguration must be started before you call createComScoreStreamingAnalytics');
       return;
@@ -102,7 +100,7 @@ export class ComScoreAnalytics {
    */
   public static userConsentGranted() {
     if (ComScoreAnalytics.started) {
-      this.analytics.configuration.getPublisherConfiguration(this.configuration.publisherId).setPersistentLabel('cs_ucfr', '1' );
+      this.analytics.configuration.getPublisherConfiguration(this.configuration.publisherId).setPersistentLabel('cs_ucfr', '1');
       this.analytics.notifyHiddenEvent();
     }
   }
@@ -112,7 +110,7 @@ export class ComScoreAnalytics {
    */
   public static userConsentDenied() {
     if (ComScoreAnalytics.started) {
-      this.analytics.configuration.getPublisherConfiguration(this.configuration.publisherId).setPersistentLabel('cs_ucfr', '0' );
+      this.analytics.configuration.getPublisherConfiguration(this.configuration.publisherId).setPersistentLabel('cs_ucfr', '0');
       this.analytics.notifyHiddenEvent();
     }
   }
