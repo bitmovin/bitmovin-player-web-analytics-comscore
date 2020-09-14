@@ -1,6 +1,6 @@
 {
   "name": "@bitmovin/player-integration-comscore",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "ComScore analytics integration for the Bitmovin Player",
   "repository": {
     "type": "git",
