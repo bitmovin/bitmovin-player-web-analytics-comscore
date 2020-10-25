@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+# Develop
+## Fixed
+- Update type definitions for both `AdvertisementMetadata.AdvertisementType` and `ContentMetadata.ContentType`. 
+
 # [1.2.1]
 ## Changed
 - Call configuration methods in `ComScoreAnalytics` regardless of the `isOTT` setting, per new integration guidelines. 
