@@ -270,21 +270,21 @@ export class ComScoreStreamingAnalytics {
   private contentType(): ns_.analytics.StreamingAnalytics.ContentMetadata.ContentType {
     switch (this.metadata.mediaType) {
       case ComScoreMediaType.LongFormOnDemand:
-        return ns_.analytics.StreamingAnalytics.ContentMetadata.ContentType.LongFormOnDemand;
+        return ns_.analytics.StreamingAnalytics.ContentMetadata.ContentType.LONG_FORM_ON_DEMAND;
       case ComScoreMediaType.ShortFormOnDemand:
-        return ns_.analytics.StreamingAnalytics.ContentMetadata.ContentType.ShortFormOnDemand;
+        return ns_.analytics.StreamingAnalytics.ContentMetadata.ContentType.SHORT_FORM_ON_DEMAND;
       case ComScoreMediaType.Live:
-        return ns_.analytics.StreamingAnalytics.ContentMetadata.ContentType.Live;
+        return ns_.analytics.StreamingAnalytics.ContentMetadata.ContentType.LIVE;
       case ComScoreMediaType.UserGeneratedLongFormOnDemand:
-        return ns_.analytics.StreamingAnalytics.ContentMetadata.ContentType.UserGeneratedLongFormOnDemand;
+        return ns_.analytics.StreamingAnalytics.ContentMetadata.ContentType.USER_GENERATED_LONG_FORM_ON_DEMAND;
       case ComScoreMediaType.UserGeneratedShortFormOnDemand:
-        return ns_.analytics.StreamingAnalytics.ContentMetadata.ContentType.UserGeneratedShortFormOnDemand;
+        return ns_.analytics.StreamingAnalytics.ContentMetadata.ContentType.USER_GENERATED_SHORT_FORM_ON_DEMAND;
       case ComScoreMediaType.UserGeneratedLive:
-        return ns_.analytics.StreamingAnalytics.ContentMetadata.ContentType.UserGeneratedLive;
+        return ns_.analytics.StreamingAnalytics.ContentMetadata.ContentType.USER_GENERATED_LIVE;
       case ComScoreMediaType.Bumper:
-        return ns_.analytics.StreamingAnalytics.ContentMetadata.ContentType.Bumper;
+        return ns_.analytics.StreamingAnalytics.ContentMetadata.ContentType.BUMPER;
       case ComScoreMediaType.Other:
-        return ns_.analytics.StreamingAnalytics.ContentMetadata.ContentType.Other;
+        return ns_.analytics.StreamingAnalytics.ContentMetadata.ContentType.OTHER;
     }
   }
 }
