@@ -209,15 +209,15 @@ export class ComScoreStreamingAnalytics {
 
   private adType(): ns_.analytics.StreamingAnalytics.AdvertisementMetadata.AdvertisementType {
     if (this.player.isLive()) {
-      return ns_.analytics.StreamingAnalytics.AdvertisementMetadata.AdvertisementType.LinearLive;
+      return ns_.analytics.StreamingAnalytics.AdvertisementMetadata.AdvertisementType.LIVE;
     } else {
       if (this.currentAd) {
         if (this.adBreakScheduleTime === 0) {
-          return ns_.analytics.StreamingAnalytics.AdvertisementMetadata.AdvertisementType.LinearOnDemandPreRoll;
+          return ns_.analytics.StreamingAnalytics.AdvertisementMetadata.AdvertisementType.ON_DEMAND_PRE_ROLL;
         } else if (this.adBreakScheduleTime === this.player.getDuration()) {
-          return ns_.analytics.StreamingAnalytics.AdvertisementMetadata.AdvertisementType.LinearOnDemandPostRoll;
+          return ns_.analytics.StreamingAnalytics.AdvertisementMetadata.AdvertisementType.ON_DEMAND_POST_ROLL;
         } else {
-          return ns_.analytics.StreamingAnalytics.AdvertisementMetadata.AdvertisementType.LinearOnDemandMidRoll;
+          return ns_.analytics.StreamingAnalytics.AdvertisementMetadata.AdvertisementType.ON_DEMAND_MID_ROLL;
         }
       }
     }

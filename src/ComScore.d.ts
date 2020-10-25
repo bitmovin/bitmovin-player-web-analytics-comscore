@@ -75,16 +75,16 @@ declare namespace ns_ {
 
       namespace AdvertisementMetadata {
         export enum AdvertisementType {
-          LinearOnDemandPreRoll,
-          LinearOnDemandMidRoll,
-          LinearOnDemandPostRoll,
-          LinearLive,
-          BrandedOnDemandPreRoll,
-          BrandedOnDemandMidRoll,
-          BrandedOnDemandPostRoll,
-          BrandedOnDemandContent,
-          BrandedOnDemandLive,
-          Other,
+          ON_DEMAND_PRE_ROLL,
+          ON_DEMAND_MID_ROLL,
+          ON_DEMAND_POST_ROLL,
+          LIVE,
+          BRANDED_ON_DEMAND_PRE_ROLL,
+          BRANDED_ON_DEMAND_MID_ROLL,
+          BRANDED_ON_DEMAND_POST_ROLL,
+          BRANDED_AS_CONTENT,
+          BRANDED_DURING_LIVE,
+          OTHER,
         }
       }
 
