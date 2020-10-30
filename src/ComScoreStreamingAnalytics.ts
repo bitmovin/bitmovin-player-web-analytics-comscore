@@ -209,15 +209,15 @@ export class ComScoreStreamingAnalytics {
 
   private adType(): ns_.analytics.StreamingAnalytics.AdvertisementMetadata.AdvertisementType {
     if (this.player.isLive()) {
-      return ns_.analytics.StreamingAnalytics.AdvertisementMetadata.AdvertisementType.LinearLive;
+      return ns_.analytics.StreamingAnalytics.AdvertisementMetadata.AdvertisementType.LIVE;
     } else {
       if (this.currentAd) {
         if (this.adBreakScheduleTime === 0) {
-          return ns_.analytics.StreamingAnalytics.AdvertisementMetadata.AdvertisementType.LinearOnDemandPreRoll;
+          return ns_.analytics.StreamingAnalytics.AdvertisementMetadata.AdvertisementType.ON_DEMAND_PRE_ROLL;
         } else if (this.adBreakScheduleTime === this.player.getDuration()) {
-          return ns_.analytics.StreamingAnalytics.AdvertisementMetadata.AdvertisementType.LinearOnDemandPostRoll;
+          return ns_.analytics.StreamingAnalytics.AdvertisementMetadata.AdvertisementType.ON_DEMAND_POST_ROLL;
         } else {
-          return ns_.analytics.StreamingAnalytics.AdvertisementMetadata.AdvertisementType.LinearOnDemandMidRoll;
+          return ns_.analytics.StreamingAnalytics.AdvertisementMetadata.AdvertisementType.ON_DEMAND_MID_ROLL;
         }
       }
     }
@@ -270,21 +270,21 @@ export class ComScoreStreamingAnalytics {
   private contentType(): ns_.analytics.StreamingAnalytics.ContentMetadata.ContentType {
     switch (this.metadata.mediaType) {
       case ComScoreMediaType.LongFormOnDemand:
-        return ns_.analytics.StreamingAnalytics.ContentMetadata.ContentType.LongFormOnDemand;
+        return ns_.analytics.StreamingAnalytics.ContentMetadata.ContentType.LONG_FORM_ON_DEMAND;
       case ComScoreMediaType.ShortFormOnDemand:
-        return ns_.analytics.StreamingAnalytics.ContentMetadata.ContentType.ShortFormOnDemand;
+        return ns_.analytics.StreamingAnalytics.ContentMetadata.ContentType.SHORT_FORM_ON_DEMAND;
       case ComScoreMediaType.Live:
-        return ns_.analytics.StreamingAnalytics.ContentMetadata.ContentType.Live;
+        return ns_.analytics.StreamingAnalytics.ContentMetadata.ContentType.LIVE;
       case ComScoreMediaType.UserGeneratedLongFormOnDemand:
-        return ns_.analytics.StreamingAnalytics.ContentMetadata.ContentType.UserGeneratedLongFormOnDemand;
+        return ns_.analytics.StreamingAnalytics.ContentMetadata.ContentType.USER_GENERATED_LONG_FORM_ON_DEMAND;
       case ComScoreMediaType.UserGeneratedShortFormOnDemand:
-        return ns_.analytics.StreamingAnalytics.ContentMetadata.ContentType.UserGeneratedShortFormOnDemand;
+        return ns_.analytics.StreamingAnalytics.ContentMetadata.ContentType.USER_GENERATED_SHORT_FORM_ON_DEMAND;
       case ComScoreMediaType.UserGeneratedLive:
-        return ns_.analytics.StreamingAnalytics.ContentMetadata.ContentType.UserGeneratedLive;
+        return ns_.analytics.StreamingAnalytics.ContentMetadata.ContentType.USER_GENERATED_LIVE;
       case ComScoreMediaType.Bumper:
-        return ns_.analytics.StreamingAnalytics.ContentMetadata.ContentType.Bumper;
+        return ns_.analytics.StreamingAnalytics.ContentMetadata.ContentType.BUMPER;
       case ComScoreMediaType.Other:
-        return ns_.analytics.StreamingAnalytics.ContentMetadata.ContentType.Other;
+        return ns_.analytics.StreamingAnalytics.ContentMetadata.ContentType.OTHER;
     }
   }
 }
