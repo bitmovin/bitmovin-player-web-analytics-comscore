@@ -67,8 +67,6 @@ export class ComScoreStreamingAnalytics {
     this.userConsent = ComScoreUserConsent.Granted;
   }
 
-
-
   /**
    * sets the userContent to denied. Use after the ComScoreAnalytics object has been started
    */
