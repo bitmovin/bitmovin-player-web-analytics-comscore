@@ -15,6 +15,7 @@ export class ComScoreStreamingAnalytics {
   private adBreakScheduleTime?: number;
   private logger: ComScoreLogger;
   private userConsent: ComScoreUserConsent = ComScoreUserConsent.Unknown;
+  private _suppressAdAnalytics = false;
 
   constructor(player: PlayerAPI, metadata: ComScoreMetadata = new ComScoreMetadata(),
               configuration: ComScoreConfiguration) {
@@ -171,9 +172,19 @@ export class ComScoreStreamingAnalytics {
     }
   }
 
+  public suppressAdAnalytics(suppress: boolean): void {
+    this._suppressAdAnalytics = suppress;
+  }
+
   private transitionToAd(): void {
     if (this.comScoreState !== ComScoreState.Advertisement) {
       this.stopComScoreTracking();
+
+      if (this._suppressAdAnalytics) {
+        ComScoreLogger.log('Not tracking ad content as ad analytics is suppressed');
+        return;
+      }
+
       const metadata: any = { ns_st_cl: Math.round(this.currentAd.duration * 1000)};
       this.decorateUserConsent(metadata);
 
