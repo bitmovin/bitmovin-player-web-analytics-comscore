@@ -6,7 +6,7 @@ Bitmovin Video Player with the ComScore Analytics integration
 ## Installation
 
 Via npm package:
-`npm install --save bitmovin-player-analytics-comscore`
+`npm install --save @bitmovin/player-integration-comscore`
 
 or add `bitmovinplayer-analytics-comscore.js` directly.
 
